@@ -1,13 +1,8 @@
 import 'dart:convert' as cnvrt;
 
-/// Contains base classes for latin 2  to latin 16 / iso-8859-XX codecs
+/// Contains base classes for 8bit codecs
 
-/// Provides a simple, non chunkable iso-8859-XX  decoder.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
+/// Provides a simple, non chunkable decoder.
 class BaseDecoder extends cnvrt.Converter<List<int>, String> {
   final String symbols;
   final int startIndex;
@@ -28,20 +23,23 @@ class BaseDecoder extends cnvrt.Converter<List<int>, String> {
     }
     // note: this directly modifies the given data, so decoding the
     // same byte array twice will not work
+    List<int> modified;
     for (var i = start; i < end; i++) {
       final byte = bytes[i];
       if ((byte & ~0xFF) != 0) {
         if (!allowInvalid) {
           throw FormatException('Invalid value in input: $byte at position $i');
         } else {
-          bytes[i] = 0xFFFD; // unicode �
+          modified ??= List.from(bytes);
+          modified[i] = 0xFFFD; // unicode �
         }
       } else if (byte > startIndex) {
         final index = byte - (startIndex + 1);
-        bytes[i] = symbols.codeUnitAt(index);
+        modified ??= List.from(bytes);
+        modified[i] = symbols.codeUnitAt(index);
       }
     }
-    return String.fromCharCodes(bytes, start, end);
+    return String.fromCharCodes(modified ?? bytes, start, end);
   }
 }
 
@@ -107,7 +105,7 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
         if (value == null) {
           if (!allowInvalid) {
             throw FormatException(
-                'Invalid value in input: ${String.fromCharCode(rune)} ($rune) at $i');
+                'Invalid value in input: "${String.fromCharCode(rune)}" / ($rune) at index $i');
           } else {
             runesList[i] = 0x3F; // ?
           }
