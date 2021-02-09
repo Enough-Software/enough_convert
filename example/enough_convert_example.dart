@@ -20,6 +20,7 @@ void main() {
   windows1250();
   windows1251();
   windows1252();
+  gbk();
 }
 
 void latin2() {
@@ -99,6 +100,10 @@ void windows1251() {
 void windows1252() {
   roundtrip(const Windows1252Codec(allowInvalid: false),
       'Il faut être bête quand même.');
+}
+
+void gbk() {
+  roundtrip(const GbkCodec(allowInvalid: false), '白日依山尽，黄河入海流');
 }
 
 void roundtrip(cnvrt.Encoding codec, String input) {
