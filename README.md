@@ -1,6 +1,6 @@
-Support for ISO 8859 / Latin and Windows character encodings missing from `dart:convert`.
+Support for character encodings, charsets and codecs missing from `dart:convert`.
 
-Supporting the following encodings:
+Supports the following encodings:
 * Latin / ISO 8859 encodings:
   * Latin 1 / ISO 8859-1
   * Latin 2 / ISO 8859-2
@@ -21,6 +21,7 @@ Supporting the following encodings:
   * Windows-1250 / cp-1250
   * Windows-1251 / cp-1251
   * Windows-1252 / cp-1252
+* GBK (compatible with GB 2312)
 
 
 ## Usage
@@ -46,7 +47,7 @@ Add this dependency your pubspec.yaml file:
 
 ```
 dependencies:
-  enough_convert: ^0.9.0
+  enough_convert: ^0.10.0
 ```
 The latest version or `enough_convert` is [![enough_convert version](https://img.shields.io/pub/v/enough_convert.svg)](https://pub.dartlang.org/packages/enough_convert).
 
