@@ -47,7 +47,7 @@ Add this dependency your pubspec.yaml file:
 
 ```
 dependencies:
-  enough_convert: ^0.10.0
+  enough_convert: ^0.11.0
 ```
 The latest version or `enough_convert` is [![enough_convert version](https://img.shields.io/pub/v/enough_convert.svg)](https://pub.dartlang.org/packages/enough_convert).
 
@@ -57,6 +57,9 @@ The latest version or `enough_convert` is [![enough_convert version](https://img
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: https://github.com/Enough-Software/enough_convert/issues
+
+## Null-Safety
+enough_convert is null-safe from v0.11.0 onward.
 
 ## License
 `enough_convert` is licensed under the commercial friendly [Mozilla Public License 2.0](LICENSE)

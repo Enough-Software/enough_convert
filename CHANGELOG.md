@@ -1,3 +1,6 @@
+## 0.11.0
+- Add null-safety
+
 ## 0.10.0
 
 - Decoding data does not change the data anymore, as this is not expected behavior 
