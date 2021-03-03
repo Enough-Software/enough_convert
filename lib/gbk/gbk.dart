@@ -57,7 +57,7 @@ class GbkCodec extends Encoding {
   /// If [allowInvalid] is not given, it defaults to the `allowInvalid` that
   /// was used to instantiate `this`.
   @override
-  String decode(List<int> codeUnits, {bool allowInvalid}) {
+  String decode(List<int> codeUnits, {bool? allowInvalid}) {
     allowInvalid ??= _allowInvalid;
     return GbkDecoder(allowInvalid: allowInvalid).convert(codeUnits);
   }
@@ -82,7 +82,7 @@ class GbkEncoder extends Converter<String, List<int>> {
   /// If [start] and [end] are provided, only the substring
   /// `string.substring(start, end)` is converted.
   @override
-  Uint8List convert(String string, [int start = 0, int end]) {
+  Uint8List convert(String string, [int start = 0, int? end]) {
     var stringLength = string.length;
     end = RangeError.checkValidRange(start, end, stringLength);
     var length = end - start;
@@ -207,8 +207,8 @@ class GbkDecoder extends Converter<List<int>, String> {
   /// If the [codeUnits] start with the encoding of a
   /// [unicodeBomCharacterRune], that character is discarded.
   @override
-  String convert(List<int> codeUnits, [int start = 0, int end]) {
-    var length = codeUnits.length;
+  String convert(List<int> codeUnits, [int start = 0, int? end]) {
+    final length = codeUnits.length;
     end = RangeError.checkValidRange(start, end, length);
 
     // Fast case for ASCII strings avoids StringBuffer / decodeMap.
@@ -221,10 +221,11 @@ class GbkDecoder extends Converter<List<int>, String> {
         return firstPart;
       }
       buffer = StringBuffer(firstPart);
+    } else {
+      buffer = StringBuffer();
     }
 
-    buffer ??= StringBuffer();
-    var decoder = _GbkStreamDecoder(buffer, _allowInvalid);
+    final decoder = _GbkStreamDecoder(buffer, _allowInvalid);
     decoder.convert(codeUnits, start, end);
     decoder.flush(codeUnits, end);
     return buffer.toString();
@@ -330,7 +331,7 @@ class _GbkStreamDecoder {
   ///
   /// The [source] and [offset] of the current position may be provided,
   /// and are included in the exception if one is thrown.
-  void flush([List<int> source, int offset]) {
+  void flush([List<int>? source, int? offset]) {
     if (hasPartialInput) {
       if (!_allowInvalid) {
         throw FormatException('Unfinished GBK octet sequence', source, offset);

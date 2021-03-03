@@ -30,7 +30,7 @@ class Latin1Decoder extends cnvrt.Converter<List<int>, String> {
   const Latin1Decoder({this.allowInvalid = false});
 
   @override
-  String convert(List<int> bytes, [int start = 0, int end]) {
+  String convert(List<int> bytes, [int start = 0, int? end]) {
     // values of ISO 8859-1 corresponds to the first 256 characters in UTF8, so conversion is trivial
     end = RangeError.checkValidRange(start, end, bytes.length);
     if (end == null) {
@@ -120,7 +120,7 @@ class Latin1Encoder extends cnvrt.Converter<String, List<int>> {
   const Latin1Encoder({this.allowInvalid = false});
 
   @override
-  List<int> convert(String input, [int start = 0, int end]) {
+  List<int> convert(String input, [int start = 0, int? end]) {
     // 7bit values of ISO 8859 correspond to their ASCII values:
     final runes = input.runes;
     end = RangeError.checkValidRange(start, end, runes.length);

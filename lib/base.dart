@@ -13,17 +13,14 @@ class BaseDecoder extends cnvrt.Converter<List<int>, String> {
   /// The length of the [symbols] need to be `255` / `0xFF` minus the [startIndex].
   /// Set [allowedInvalid] to true in case invalid characters sequences should be at least readable.
   const BaseDecoder(this.symbols, this.startIndex, {this.allowInvalid = false})
-      : assert(symbols?.length == 255 - startIndex);
+      : assert(symbols.length == 255 - startIndex);
 
   @override
-  String convert(List<int> bytes, [int start = 0, int end]) {
+  String convert(List<int> bytes, [int start = 0, int? end]) {
     end = RangeError.checkValidRange(start, end, bytes.length);
-    if (end == null) {
-      throw RangeError('Invalid range');
-    }
     // note: this directly modifies the given data, so decoding the
     // same byte array twice will not work
-    List<int> modified;
+    List<int>? modified;
     for (var i = start; i < end; i++) {
       final byte = bytes[i];
       if ((byte & ~0xFF) != 0) {
@@ -88,12 +85,9 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
   }
 
   @override
-  List<int> convert(String input, [int start = 0, int end]) {
+  List<int> convert(String input, [int start = 0, int? end]) {
     final runes = input.runes;
     end = RangeError.checkValidRange(start, end, runes.length);
-    if (end == null) {
-      throw RangeError('Invalid range');
-    }
     var runesList = runes.toList(growable: false);
     if (start > 0 || end < runesList.length) {
       runesList = runesList.sublist(start, end);
