@@ -3,11 +3,6 @@ import 'package:enough_convert/base.dart';
 /// Contains base classes for windows codepage codecs
 
 /// Provides a windows codepage decoder.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class WindowsDecoder extends BaseDecoder {
   /// Creates a new windows codepage decoder.
   /// The [symbols] need to be exactly `128` characters long.

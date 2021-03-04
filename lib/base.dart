@@ -1,5 +1,7 @@
 import 'dart:convert' as cnvrt;
 
+import 'dart:html';
+
 /// Contains base classes for 8bit codecs
 
 /// Provides a simple, non chunkable decoder.
@@ -9,6 +11,7 @@ class BaseDecoder extends cnvrt.Converter<List<int>, String> {
   final bool allowInvalid;
 
   /// Creates a new 8bit decoder.
+  ///
   /// [symbols] contain all symbols different than UTF8 from the specified [startIndex] onwards.
   /// The length of the [symbols] need to be `255` / `0xFF` minus the [startIndex].
   /// Set [allowedInvalid] to true in case invalid characters sequences should be at least readable.
@@ -18,8 +21,6 @@ class BaseDecoder extends cnvrt.Converter<List<int>, String> {
   @override
   String convert(List<int> bytes, [int start = 0, int? end]) {
     end = RangeError.checkValidRange(start, end, bytes.length);
-    // note: this directly modifies the given data, so decoding the
-    // same byte array twice will not work
     List<int>? modified;
     for (var i = start; i < end; i++) {
       final byte = bytes[i];
@@ -38,6 +39,12 @@ class BaseDecoder extends cnvrt.Converter<List<int>, String> {
     }
     return String.fromCharCodes(modified ?? bytes, start, end);
   }
+
+  @override
+  Sink<List<int>> startChunkedConversion(Sink<String> sink) {
+    // TODO: implement startChunkedConversion
+    return super.startChunkedConversion(sink);
+  }
 }
 
 /// Provides a simple, non chunkable 8bit encoder.
@@ -47,6 +54,7 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
   final int startIndex;
 
   /// Creates a new encoder.
+  ///
   /// Set [allowedInvalid] to true in case invalid characters should be translated to question marks.
   const BaseEncoder(this.encodingMap, this.startIndex,
       {this.allowInvalid = false});

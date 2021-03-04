@@ -103,11 +103,6 @@ const Map<int, int> _latin9SymbolMap = {
 };
 
 /// Provides a latin 9 / iso-8859-9 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin9Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -142,11 +137,6 @@ class Latin9Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 9 /  iso-8859-9 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin9Decoder extends LatinDecoder {
   const Latin9Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

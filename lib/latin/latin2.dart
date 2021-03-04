@@ -103,11 +103,6 @@ const Map<int, int> _latin2SymbolMap = {
 };
 
 /// Provides a latin 2 / iso-8859-2 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin2Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -142,11 +137,6 @@ class Latin2Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 2 /  iso-8859-2 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin2Decoder extends LatinDecoder {
   const Latin2Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

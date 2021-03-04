@@ -1,6 +1,7 @@
 import 'dart:convert' as cnvrt;
 
 /// Provides simple iso-8859-1 / latin 1 support for dart.
+///
 /// Use `dart:convert.Latin1Codec` if in doubt.
 class Latin1Codec extends cnvrt.Encoding {
   final bool allowInvalid;
@@ -33,9 +34,6 @@ class Latin1Decoder extends cnvrt.Converter<List<int>, String> {
   String convert(List<int> bytes, [int start = 0, int? end]) {
     // values of ISO 8859-1 corresponds to the first 256 characters in UTF8, so conversion is trivial
     end = RangeError.checkValidRange(start, end, bytes.length);
-    if (end == null) {
-      throw RangeError('Invalid range');
-    }
 
     for (var i = start; i < end; i++) {
       var byte = bytes[i];
@@ -124,9 +122,6 @@ class Latin1Encoder extends cnvrt.Converter<String, List<int>> {
     // 7bit values of ISO 8859 correspond to their ASCII values:
     final runes = input.runes;
     end = RangeError.checkValidRange(start, end, runes.length);
-    if (end == null) {
-      throw RangeError('Invalid range');
-    }
     var runesList = runes.toList(growable: false);
     if (start > 0 || end < runesList.length) {
       runesList = runesList.sublist(start, end);

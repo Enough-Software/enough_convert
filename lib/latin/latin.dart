@@ -3,11 +3,6 @@ import 'package:enough_convert/base.dart';
 /// Contains base classes for latin 2  to latin 16 / iso-8859-XX codecs
 
 /// Provides a simple, non chunkable iso-8859-XX  decoder.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class LatinDecoder extends BaseDecoder {
   /// Creates a new latin 1 decoder.
   /// The [symbols] need to be exactly `95` characters long.

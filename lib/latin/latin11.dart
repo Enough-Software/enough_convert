@@ -95,11 +95,6 @@ const Map<int, int> _latin11SymbolMap = {
 };
 
 /// Provides a latin 11 / iso-8859-11 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin11Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -134,11 +129,6 @@ class Latin11Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 11 /  iso-88511-11 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin11Decoder extends LatinDecoder {
   const Latin11Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

@@ -100,11 +100,6 @@ const Map<int, int> _latin7SymbolMap = {
 };
 
 /// Provides a latin 7 / iso-8859-7 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin7Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -139,11 +134,6 @@ class Latin7Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 7 /  iso-8859-7 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin7Decoder extends LatinDecoder {
   const Latin7Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

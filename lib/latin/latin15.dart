@@ -103,11 +103,6 @@ const Map<int, int> _latin15SymbolMap = {
 };
 
 /// Provides a latin 15 / iso-8859-15 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin15Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -142,11 +137,6 @@ class Latin15Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 15 /  iso-88515-15 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin15Decoder extends LatinDecoder {
   const Latin15Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

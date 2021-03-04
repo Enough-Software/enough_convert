@@ -67,11 +67,6 @@ const Map<int, int> _latin8SymbolMap = {
 };
 
 /// Provides a latin 8 / iso-8859-8 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin8Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -106,11 +101,6 @@ class Latin8Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 8 /  iso-8859-8 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin8Decoder extends LatinDecoder {
   const Latin8Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

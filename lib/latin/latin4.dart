@@ -103,11 +103,6 @@ const Map<int, int> _latin4SymbolMap = {
 };
 
 /// Provides a latin 4 / iso-8859-4 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin4Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -142,11 +137,6 @@ class Latin4Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 4 /  iso-8859-4 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin4Decoder extends LatinDecoder {
   const Latin4Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

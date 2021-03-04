@@ -103,11 +103,6 @@ const Map<int, int> _latin14SymbolMap = {
 };
 
 /// Provides a latin 14 / iso-8859-14 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin14Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -142,11 +137,6 @@ class Latin14Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 14 /  iso-88514-14 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin14Decoder extends LatinDecoder {
   const Latin14Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

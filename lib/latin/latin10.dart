@@ -103,11 +103,6 @@ const Map<int, int> _latin10SymbolMap = {
 };
 
 /// Provides a latin 10 / iso-8859-10 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Latin10Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -142,11 +137,6 @@ class Latin10Encoder extends LatinEncoder {
 }
 
 /// Decodes latin 10 /  iso-88510-10 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Latin10Decoder extends LatinDecoder {
   const Latin10Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.

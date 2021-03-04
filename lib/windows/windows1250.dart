@@ -131,11 +131,6 @@ const Map<int, int> _cp1250Map = {
 };
 
 /// Provides a windows 1250 / cp1250 codec for easy encoding and decoding.
-/// Note that the decoder directly modifies the data given in `decode(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// codec.decode([...data]);
-/// ```
 class Windows1250Codec extends cnvrt.Encoding {
   final bool allowInvalid;
 
@@ -161,11 +156,6 @@ class Windows1250Codec extends cnvrt.Encoding {
 }
 
 /// Decodes windows 1250 / cp1250 data.
-/// Note that the decoder directly modifies the data given in `convert(List<int> data)`,
-/// in doubt create a new array first, e.g.
-/// ```dart
-/// decoder.convert([...data]);
-/// ```
 class Windows1250Decoder extends WindowsDecoder {
   const Windows1250Decoder({
     /// set [allowInvalid] to `true` for ignoring invalid data.
