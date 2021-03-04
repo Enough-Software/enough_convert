@@ -1,5 +1,7 @@
 import 'dart:convert' as cnvrt;
 
+import 'dart:typed_data';
+
 /// Contains base classes for 8bit codecs
 
 /// Provides a simple, non chunkable decoder.
@@ -39,9 +41,14 @@ class BaseDecoder extends cnvrt.Converter<List<int>, String> {
   }
 
   @override
-  Sink<List<int>> startChunkedConversion(Sink<String> sink) {
-    // TODO: implement startChunkedConversion
-    return super.startChunkedConversion(sink);
+  cnvrt.ByteConversionSink startChunkedConversion(Sink<String> sink) {
+    cnvrt.StringConversionSink stringSink;
+    if (sink is cnvrt.StringConversionSink) {
+      stringSink = sink;
+    } else {
+      stringSink = cnvrt.StringConversionSink.from(sink);
+    }
+    return BaseDecoderSink(stringSink, allowInvalid, this);
   }
 }
 
@@ -92,14 +99,13 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
 
   @override
   List<int> convert(String input, [int start = 0, int? end]) {
-    final runes = input.runes;
-    end = RangeError.checkValidRange(start, end, runes.length);
-    var runesList = runes.toList(growable: false);
+    var runesList = input.runes.toList(growable: false);
+    end = RangeError.checkValidRange(start, end, runesList.length);
     if (start > 0 || end < runesList.length) {
       runesList = runesList.sublist(start, end);
     }
     for (var i = 0; i < runesList.length; i++) {
-      var rune = runesList[i];
+      final rune = runesList[i];
       if (rune > startIndex) {
         final value = encodingMap[rune];
         if (value == null) {
@@ -115,5 +121,102 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
       }
     }
     return runesList;
+  }
+
+  @override
+  cnvrt.StringConversionSink startChunkedConversion(Sink<List<int>> sink) {
+    cnvrt.ByteConversionSink byteSink;
+    if (sink is cnvrt.ByteConversionSink) {
+      byteSink = sink;
+    } else {
+      byteSink = cnvrt.ByteConversionSink.from(sink);
+    }
+    return BaseEncoderSink(byteSink, this);
+  }
+}
+
+/// Decoder sink for chunked conversion.
+///
+/// Compare `BaseDecoder.startChunkedConversion(...)`.
+class BaseDecoderSink extends cnvrt.ByteConversionSinkBase {
+  final cnvrt.StringConversionSink sink;
+  final bool allowInvalid;
+  final BaseDecoder decoder;
+
+  BaseDecoderSink(this.sink, this.allowInvalid, this.decoder);
+
+  @override
+  void close() {
+    sink.close();
+  }
+
+  @override
+  void add(List<int> chunk) {
+    addSlice(chunk, 0, chunk.length, false);
+  }
+
+  @override
+  void addSlice(List<int> source, int start, int end, bool isLast) {
+    RangeError.checkValidRange(start, end, source.length);
+    if (start == end) return;
+    if (!allowInvalid && source is! Uint8List) {
+      // List may contain value outside of the 0..255 range. If so, throw.
+      // Technically, we could excuse Uint8ClampedList as well, but it unlikely
+      // to be relevant.
+      _checkValid8Bit(source, start, end);
+    }
+    _addSliceToSink(source, start, end, isLast);
+  }
+
+  void _addSliceToSink(List<int> source, int start, int end, bool isLast) {
+    final sliceText = decoder.convert(source, start, end);
+    sink.add(sliceText);
+    if (isLast) {
+      close();
+    }
+  }
+
+  void _checkValid8Bit(List<int> source, int start, int end) {
+    for (var i = start; i < end; i++) {
+      var char = source[i];
+      if (char < 0 || char > 0xff) {
+        throw FormatException(
+            'Source contains non-8-bit character code 0x${char.toRadixString(16)} at $i.',
+            source,
+            i);
+      }
+    }
+  }
+}
+
+/// Encoder sink for chunked conversion.
+///
+/// Compare `BaseEncoder.startChunkedConversion(...)`.
+class BaseEncoderSink extends cnvrt.StringConversionSinkBase {
+  final cnvrt.ByteConversionSink sink;
+  final BaseEncoder encoder;
+
+  BaseEncoderSink(this.sink, this.encoder);
+
+  @override
+  void close() {
+    sink.close();
+  }
+
+  @override
+  void add(String chunk) {
+    addSlice(chunk, 0, chunk.length, false);
+  }
+
+  @override
+  void addSlice(String source, int start, int end, bool isLast) {
+    RangeError.checkValidRange(start, end, source.length);
+    if (start == end) return;
+
+    final sliceData = encoder.convert(source, start, end);
+    sink.add(sliceData);
+    if (isLast) {
+      close();
+    }
   }
 }
