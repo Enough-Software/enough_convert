@@ -1,3 +1,6 @@
+## 1.1.0
+- Support chunked conversion
+
 ## 1.0.0
 - Add null-safety
 
