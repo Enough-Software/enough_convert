@@ -1,9 +1,8 @@
-/// Provides missing common character encoders / decoders / codecs / encodings for Dart.
+/// Provides missing common character encoders / decoders / codecs / encodings / charsets for Dart.
 library enough_convert;
 
 export 'base.dart';
 export 'latin/latin.dart';
-export 'latin/latin1.dart';
 export 'latin/latin2.dart';
 export 'latin/latin3.dart';
 export 'latin/latin4.dart';
