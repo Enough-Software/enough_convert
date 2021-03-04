@@ -23,11 +23,10 @@ void main() {
     });
 
     test('Decode Windows1251', () {
-      expect(Windows1251Decoder().convert([0xC4, 0xD6, 0xFC]), 'ÄÖü');
-      final bytes =
-          Windows1251Encoder().convert('hello world motörhead ruleß ok ô');
-      expect(Windows1251Decoder().convert(bytes),
-          'hello world motörhead ruleß ok ô');
+      expect(Windows1251Decoder().convert([0xC4, 0xD6, 0xFC]), 'ДЦь');
+      final bytes = Windows1251Encoder().convert('Радий познайомитися з Вами!');
+      expect(
+          Windows1251Decoder().convert(bytes), 'Радий познайомитися з Вами!');
     });
 
     test('Decode Windows1251 with invalid value when invalid input is allowed',
@@ -35,7 +34,7 @@ void main() {
       expect(
           Windows1251Decoder(allowInvalid: true)
               .convert([0xC4, 0xD6, 0xFC, 0xFF1]),
-          'ÄÖü�');
+          'ДЦь�');
     });
 
     test(

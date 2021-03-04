@@ -1,7 +1,5 @@
 import 'dart:convert' as cnvrt;
 
-import 'dart:html';
-
 /// Contains base classes for 8bit codecs
 
 /// Provides a simple, non chunkable decoder.
