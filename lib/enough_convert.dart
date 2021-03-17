@@ -21,4 +21,6 @@ export 'windows/windows.dart';
 export 'windows/windows1250.dart';
 export 'windows/windows1251.dart';
 export 'windows/windows1252.dart';
+export 'windows/windows1253.dart';
+export 'windows/windows1254.dart';
 export 'gbk/gbk.dart';

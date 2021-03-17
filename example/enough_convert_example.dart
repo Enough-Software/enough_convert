@@ -20,6 +20,8 @@ void main() {
   windows1250();
   windows1251();
   windows1252();
+  windows1253();
+  windows1254();
   gbk();
 }
 
@@ -100,6 +102,16 @@ void windows1251() {
 void windows1252() {
   roundtrip(const Windows1252Codec(allowInvalid: false),
       'Il faut être bête quand même.');
+}
+
+void windows1253() {
+  roundtrip(
+      const Windows1253Codec(allowInvalid: false), 'Χαίρομαι που σας γνωρίζω!');
+}
+
+void windows1254() {
+  roundtrip(const Windows1254Codec(allowInvalid: false),
+      'Tanıştığımıza memnun oldum!');
 }
 
 void gbk() {
