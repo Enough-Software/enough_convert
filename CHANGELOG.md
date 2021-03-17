@@ -1,3 +1,9 @@
+## 1.2.0
+- Add support the following encodings:
+  * Windows-1253 / cp-1253
+  * Windows-1254 / cp-1254
+
+
 ## 1.1.0
 - Support chunked conversion
 

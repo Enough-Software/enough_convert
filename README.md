@@ -21,6 +21,8 @@ Supports the following encodings:
   * Windows-1250 / cp-1250
   * Windows-1251 / cp-1251
   * Windows-1252 / cp-1252
+  * Windows-1253 / cp-1253
+  * Windows-1254 / cp-1254
 * GBK (compatible with GB-2312)
 
 
