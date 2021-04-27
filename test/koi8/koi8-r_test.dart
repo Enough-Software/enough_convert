@@ -55,8 +55,8 @@ void main() {
 
     test('encode more koi8-r ', () {
       var bytes = Koi8rEncoder().convert(
-          'ё╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡Ё╢╣╤╥╦╧╨╩╪╫╬©юабцдефгхийклмнопярстужвьызшэщчъЮАБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЫЗШЭЩЧЪ');
-      var expected = List.generate(0xFF - 0xA2, (index) => index + 0xA3);
+          '─│┌┐└┘├┤┬┴┼▀▄█▌▐░▒▓⌠■∙√≈≤≥\u{00A0}⌡°²·÷═║╒ё╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡Ё╢╣╤╥╦╧╨╩╪╫╬©юабцдефгхийклмнопярстужвьызшэщчъЮАБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЫЗШЭЩЧЪ');
+      var expected = List.generate(0xFF - 0x7F, (index) => index + 0x80);
       expect(bytes, expected);
     });
 
