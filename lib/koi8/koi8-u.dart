@@ -2,37 +2,37 @@ import 'dart:convert' as cnvrt;
 
 import 'package:enough_convert/koi8/koi8.dart';
 
-const String _koi8_r_symbols =
-    'ё╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡Ё╢╣╤╥╦╧╨╩╪╫╬©юабцдефгхийклмнопярстужвьызшэщчъЮАБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЫЗШЭЩЧЪ';
+const String _koi8_u_symbols =
+    'ёє╔ії╗╘╙╚╛ґ╝╞╟╠╡ЁЄ╣ІЇ╦╧╨╩╪Ґ╬©юабцдефгхийклмнопярстужвьызшэщчъЮАБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЫЗШЭЩЧЪ';
 
-const Map<int, int> _koi8_rSymbolMap = {
+const Map<int, int> _koi8_uSymbolMap = {
   1105: 163,
-  9555: 164,
+  1108: 164,
   9556: 165,
-  9557: 166,
-  9558: 167,
+  1110: 166,
+  1111: 167,
   9559: 168,
   9560: 169,
   9561: 170,
   9562: 171,
   9563: 172,
-  9564: 173,
+  1169: 173,
   9565: 174,
   9566: 175,
   9567: 176,
   9568: 177,
   9569: 178,
   1025: 179,
-  9570: 180,
+  1028: 180,
   9571: 181,
-  9572: 182,
-  9573: 183,
+  1030: 182,
+  1031: 183,
   9574: 184,
   9575: 185,
   9576: 186,
   9577: 187,
   9578: 188,
-  9579: 189,
+  1168: 189,
   9580: 190,
   169: 191,
   1102: 192,
@@ -101,34 +101,33 @@ const Map<int, int> _koi8_rSymbolMap = {
   1066: 255
 };
 
-class Koi8rCodec extends cnvrt.Encoding {
+class Koi8uCodec extends cnvrt.Encoding {
   final bool allowInvalid;
 
-  const Koi8rCodec({this.allowInvalid = false});
+  const Koi8uCodec({this.allowInvalid = false});
 
   @override
-  Koi8rDecoder get decoder => allowInvalid
-      ? Koi8rDecoder(allowInvalid: true)
-      : Koi8rDecoder(allowInvalid: false);
+  Koi8uDecoder get decoder => allowInvalid
+      ? Koi8uDecoder(allowInvalid: true)
+      : Koi8uDecoder(allowInvalid: false);
 
   @override
-  // TODO: implement encoder
-  Koi8rEncoder get encoder => allowInvalid
-      ? Koi8rEncoder(allowInvalid: true)
-      : Koi8rEncoder(allowInvalid: false);
+  Koi8uEncoder get encoder => allowInvalid
+      ? Koi8uEncoder(allowInvalid: true)
+      : Koi8uEncoder(allowInvalid: false);
 
   @override
-  String get name => 'KOI8-R';
+  String get name => 'KOI8-U';
 }
 
-class Koi8rDecoder extends KoiDecoder {
-  const Koi8rDecoder({
+class Koi8uDecoder extends KoiDecoder {
+  const Koi8uDecoder({
     bool allowInvalid = false,
-  }) : super(_koi8_r_symbols, allowInvalid: allowInvalid);
+  }) : super(_koi8_u_symbols, allowInvalid: allowInvalid);
 }
 
-class Koi8rEncoder extends KoiEncoder {
-  Koi8rEncoder({
+class Koi8uEncoder extends KoiEncoder {
+  Koi8uEncoder({
     bool allowInvalid = false,
-  }) : super(_koi8_rSymbolMap, allowInvalid: allowInvalid);
+  }) : super(_koi8_uSymbolMap, allowInvalid: allowInvalid);
 }

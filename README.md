@@ -26,6 +26,7 @@ Supports the following encodings:
 * GBK (compatible with GB-2312)
 * KOI8
   * KOI8-R
+  * KOI8-U
 
 
 ## Usage

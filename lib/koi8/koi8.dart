@@ -8,7 +8,7 @@ class KoiDecoder extends BaseDecoder {
   /// The [symbols] need to be exactly `128` characters long.
   /// Set [allowedInvalid] to true in case invalid characters sequences should be at least readable.
   const KoiDecoder(String symbols, {bool allowInvalid = false})
-      : super(symbols, 0xBF, allowInvalid: allowInvalid);
+      : super(symbols, 0xA2, allowInvalid: allowInvalid);
 }
 
 /// Provides a simple, non chunkable iso-8859-XX encoder.
@@ -16,5 +16,5 @@ class KoiEncoder extends BaseEncoder {
   /// Creates a new windows codepage encoder.
   /// Set [allowedInvalid] to true in case invalid characters should be translated to question marks.
   const KoiEncoder(Map<int, int> encodingMap, {bool allowInvalid = false})
-      : super(encodingMap, 0xBF, allowInvalid: allowInvalid);
+      : super(encodingMap, 0xA2, allowInvalid: allowInvalid);
 }

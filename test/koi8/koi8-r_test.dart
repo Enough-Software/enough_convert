@@ -22,9 +22,8 @@ void main() {
 
     test('Decode koi8-r', () {
       expect(Koi8rDecoder().convert([0xF1, 0xD4, 0xC0]), 'Ятю');
-      final bytes = Koi8rEncoder().convert('Я работаю and me too!');
-      expect(
-          Koi8rDecoder().convert(bytes), 'Я работаю and me too!');
+      final bytes = Koi8rEncoder().convert('Я работаю and me too! ёёё!');
+      expect(Koi8rDecoder().convert(bytes), 'Я работаю and me too! ёёё!');
     });
 
     test('Decode koi8-r with invalid value when invalid input is allowed', () {
@@ -56,8 +55,8 @@ void main() {
 
     test('encode more koi8-r ', () {
       var bytes = Koi8rEncoder().convert(
-          'юабцдефгхийклмнопярстужвьызшэщчъЮАБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЫЗШЭЩЧЪ');
-      var expected = List.generate(0xFF - 0xBF, (index) => index + 0xC0);
+          'ё╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡Ё╢╣╤╥╦╧╨╩╪╫╬©юабцдефгхийклмнопярстужвьызшэщчъЮАБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЫЗШЭЩЧЪ');
+      var expected = List.generate(0xFF - 0xA2, (index) => index + 0xA3);
       expect(bytes, expected);
     });
 
@@ -66,7 +65,7 @@ void main() {
       expect(Koi8rDecoder().convert(bytes), 'Ятю?');
     });
 
-    test('encode latin 2 with invalid value when invalid input is not allowed',
+    test('encode koi8-r with invalid value when invalid input is not allowed',
         () {
       expect(() => Koi8rEncoder().convert('Ятю�'),
           throwsA(isA<FormatException>()));
