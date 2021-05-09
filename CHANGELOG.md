@@ -1,3 +1,7 @@
+## 1.3.0
+- Add support the following encoding thanks to [habbas11](https://github.com/habbas11):
+  * Windows-1256 / cp-1256
+
 ## 1.2.0
 - Add support the following encodings:
   * Windows-1253 / cp-1253

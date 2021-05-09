@@ -23,6 +23,7 @@ Supports the following encodings:
   * Windows-1252 / cp-1252
   * Windows-1253 / cp-1253
   * Windows-1254 / cp-1254
+  * Windows-1256 / cp-1256
 * GBK (compatible with GB-2312)
 
 
@@ -49,7 +50,7 @@ Add this dependency your pubspec.yaml file:
 
 ```
 dependencies:
-  enough_convert: ^1.0.0
+  enough_convert: ^1.3.0
 ```
 The latest version or `enough_convert` is [![enough_convert version](https://img.shields.io/pub/v/enough_convert.svg)](https://pub.dartlang.org/packages/enough_convert).
 
