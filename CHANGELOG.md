@@ -1,3 +1,6 @@
+## 1.4.0
+- Thanks to [moheb2000](https://github.com/moheb2000) now the Windows-1256 codec (Persian) works as expected.
+
 ## 1.3.0
 - Add support the following encoding thanks to [habbas11](https://github.com/habbas11):
   * Windows-1256 / cp-1256
