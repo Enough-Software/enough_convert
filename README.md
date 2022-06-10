@@ -25,6 +25,9 @@ Supports the following encodings:
   * Windows-1254 / cp-1254
   * Windows-1256 / cp-1256
 * GBK (compatible with GB-2312)
+* KOI8
+  * KOI8-R
+  * KOI8-U
 
 
 ## Usage
