@@ -1,4 +1,6 @@
-import 'dart:convert' as cnvrt;
+// ignore_for_file: lines_longer_than_80_chars
+
+import 'dart:convert' as dart_convert;
 
 import 'package:enough_convert/enough_convert.dart';
 
@@ -23,7 +25,11 @@ void main() {
   windows1253();
   windows1254();
   gbk();
+  koi8r();
+  koi8u();
 }
+
+// cSpell:disable
 
 void latin2() {
   roundtrip(
@@ -118,7 +124,17 @@ void gbk() {
   roundtrip(const GbkCodec(allowInvalid: false), '白日依山尽，黄河入海流');
 }
 
-void roundtrip(cnvrt.Encoding codec, String input) {
+void koi8r() {
+  roundtrip(
+      const Koi8rCodec(allowInvalid: false), 'Радий познайомитися з Вами!');
+}
+
+void koi8u() {
+  roundtrip(
+      const Koi8uCodec(allowInvalid: false), 'Радий познайомитися з Вами!');
+}
+
+void roundtrip(dart_convert.Encoding codec, String input) {
   final encoded = codec.encode(input);
   final decoded = codec.decode([...encoded]);
   print('${codec.name}: encode "$input" to "$encoded"');

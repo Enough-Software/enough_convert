@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 2 / iso-8859-2 codec for easy encoding and decoding.
+class Latin2Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin2Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin2Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin2Decoder get decoder => allowInvalid
+      ? const Latin2Decoder(allowInvalid: true)
+      : const Latin2Decoder(allowInvalid: false);
+
+  @override
+  Latin2Encoder get encoder => allowInvalid
+      ? const Latin2Encoder(allowInvalid: true)
+      : const Latin2Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-2';
+}
+
+/// Encodes texts into latin 2 / iso-8859-2 data
+class Latin2Encoder extends LatinEncoder {
+  /// Creates a new [Latin2Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin2Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin2SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 2 /  iso-8859-2 data.
+class Latin2Decoder extends LatinDecoder {
+  /// Creates a new [Latin2Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin2Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin2Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin2Symbols =
+// ignore: lines_longer_than_80_chars
     'Ą˘Ł¤ĽŚ§¨ŠŞŤŹ\u{00AD}ŽŻ°ą˛ł´ľśˇ¸šşťź˝žżŔÁÂĂÄĹĆÇČÉĘËĚÍÎĎĐŃŇÓÔŐÖ×ŘŮÚŰÜÝŢßŕáâăäĺćçčéęëěíîďđńňóôőö÷řůúűüýţ˙';
 const Map<int, int> _latin2SymbolMap = {
   260: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin2SymbolMap = {
   355: 254,
   729: 255,
 };
-
-/// Provides a latin 2 / iso-8859-2 codec for easy encoding and decoding.
-class Latin2Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin2Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin2Decoder get decoder => allowInvalid
-      ? const Latin2Decoder(allowInvalid: true)
-      : const Latin2Decoder(allowInvalid: false);
-
-  @override
-  Latin2Encoder get encoder => allowInvalid
-      ? const Latin2Encoder(allowInvalid: true)
-      : const Latin2Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-2';
-}
-
-/// Encodes texts into latin 2 / iso-8859-2 data
-class Latin2Encoder extends LatinEncoder {
-  const Latin2Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin2SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 2 /  iso-8859-2 data.
-class Latin2Decoder extends LatinDecoder {
-  const Latin2Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin2Symbols, allowInvalid: allowInvalid);
-}

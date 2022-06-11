@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 15 / iso-8859-15 codec for easy encoding and decoding.
+class Latin15Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin15Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin15Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin15Decoder get decoder => allowInvalid
+      ? const Latin15Decoder(allowInvalid: true)
+      : const Latin15Decoder(allowInvalid: false);
+
+  @override
+  Latin15Encoder get encoder => allowInvalid
+      ? const Latin15Encoder(allowInvalid: true)
+      : const Latin15Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-15';
+}
+
+/// Encodes texts into latin 15 / iso-88515-15 data
+class Latin15Encoder extends LatinEncoder {
+  /// Creates a new [Latin15Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin15Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin15SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 15 /  iso-88515-15 data.
+class Latin15Decoder extends LatinDecoder {
+  /// Creates a new [LatinDecoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin15Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin15Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin15Symbols =
+// ignore: lines_longer_than_80_chars
     '¡¢£€¥Š§š©ª«¬\u{00AD}®¯°±²³Žµ¶·ž¹º»ŒœŸ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ';
 const Map<int, int> _latin15SymbolMap = {
   161: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin15SymbolMap = {
   254: 254,
   255: 255,
 };
-
-/// Provides a latin 15 / iso-8859-15 codec for easy encoding and decoding.
-class Latin15Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin15Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin15Decoder get decoder => allowInvalid
-      ? const Latin15Decoder(allowInvalid: true)
-      : const Latin15Decoder(allowInvalid: false);
-
-  @override
-  Latin15Encoder get encoder => allowInvalid
-      ? const Latin15Encoder(allowInvalid: true)
-      : const Latin15Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-15';
-}
-
-/// Encodes texts into latin 15 / iso-88515-15 data
-class Latin15Encoder extends LatinEncoder {
-  const Latin15Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin15SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 15 /  iso-88515-15 data.
-class Latin15Decoder extends LatinDecoder {
-  const Latin15Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin15Symbols, allowInvalid: allowInvalid);
-}

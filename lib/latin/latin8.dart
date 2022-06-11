@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 8 / iso-8859-8 codec for easy encoding and decoding.
+class Latin8Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin8Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin8Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin8Decoder get decoder => allowInvalid
+      ? const Latin8Decoder(allowInvalid: true)
+      : const Latin8Decoder(allowInvalid: false);
+
+  @override
+  Latin8Encoder get encoder => allowInvalid
+      ? const Latin8Encoder(allowInvalid: true)
+      : const Latin8Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-8';
+}
+
+/// Encodes texts into latin 8 / iso-8859-8 data
+class Latin8Encoder extends LatinEncoder {
+  /// Creates a new [Latin8Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin8Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin8SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 8 /  iso-8859-8 data.
+class Latin8Decoder extends LatinDecoder {
+  /// Creates a new [Latin8Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin8Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin8Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin8Symbols =
+// ignore: lines_longer_than_80_chars
     '?¢£¤¥¦§¨©×«¬\u{00AD}®¯°±²³´µ¶·¸¹÷»¼½¾????????????????????????????????‗אבגדהוזחטיךכלםמןנסעףפץצקרשת??\u{8206}\u{8207}?';
 const Map<int, int> _latin8SymbolMap = {
   162: 162,
@@ -65,46 +119,3 @@ const Map<int, int> _latin8SymbolMap = {
   33286: 253,
   33287: 254,
 };
-
-/// Provides a latin 8 / iso-8859-8 codec for easy encoding and decoding.
-class Latin8Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin8Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin8Decoder get decoder => allowInvalid
-      ? const Latin8Decoder(allowInvalid: true)
-      : const Latin8Decoder(allowInvalid: false);
-
-  @override
-  Latin8Encoder get encoder => allowInvalid
-      ? const Latin8Encoder(allowInvalid: true)
-      : const Latin8Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-8';
-}
-
-/// Encodes texts into latin 8 / iso-8859-8 data
-class Latin8Encoder extends LatinEncoder {
-  const Latin8Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin8SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 8 /  iso-8859-8 data.
-class Latin8Decoder extends LatinDecoder {
-  const Latin8Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin8Symbols, allowInvalid: allowInvalid);
-}

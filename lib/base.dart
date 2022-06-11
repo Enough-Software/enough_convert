@@ -1,68 +1,90 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'dart:typed_data';
 
 /// Contains base classes for 8bit codecs
 
-/// Provides a simple, non chunkable decoder.
-class BaseDecoder extends cnvrt.Converter<List<int>, String> {
-  final String symbols;
-  final int startIndex;
-  final bool allowInvalid;
-
+/// Provides a simple decoder.
+class BaseDecoder extends dart_convert.Converter<List<int>, String> {
   /// Creates a new 8bit decoder.
   ///
-  /// [symbols] contain all symbols different than UTF8 from the specified [startIndex] onwards.
-  /// The length of the [symbols] need to be `255` / `0xFF` minus the [startIndex].
-  /// Set [allowedInvalid] to true in case invalid characters sequences should be at least readable.
+  /// [symbols] contain all symbols different than UTF8 from the
+  /// specified [startIndex] onwards.
+  ///
+  /// The length of the [symbols] need to be `255` / `0xFF` minus
+  /// the [startIndex].
+  ///
+  /// Set [allowInvalid] to true in case invalid characters sequences
+  /// should be at least readable.
   const BaseDecoder(this.symbols, this.startIndex, {this.allowInvalid = false})
-      : assert(symbols.length == 255 - startIndex);
+      : assert(symbols.length == 255 - startIndex, 'invalid length of symbols');
+
+  /// The used symbols
+  final String symbols;
+
+  /// The index of the first non-ASCII character
+  final int startIndex;
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
 
   @override
-  String convert(List<int> bytes, [int start = 0, int? end]) {
-    end = RangeError.checkValidRange(start, end, bytes.length);
+  String convert(List<int> input, [int start = 0, int? end]) {
+    final usedEnd = RangeError.checkValidRange(start, end, input.length);
     List<int>? modified;
-    for (var i = start; i < end; i++) {
-      final byte = bytes[i];
+    for (var i = start; i < usedEnd; i++) {
+      final byte = input[i];
       if ((byte & ~0xFF) != 0) {
         if (!allowInvalid) {
           throw FormatException('Invalid value in input: $byte at position $i');
         } else {
-          modified ??= List.from(bytes);
+          modified ??= List.from(input);
           modified[i] = 0xFFFD; // unicode �
         }
       } else if (byte > startIndex) {
         final index = byte - (startIndex + 1);
-        modified ??= List.from(bytes);
+        modified ??= List.from(input);
         modified[i] = symbols.codeUnitAt(index);
       }
     }
-    return String.fromCharCodes(modified ?? bytes, start, end);
+    return String.fromCharCodes(modified ?? input, start, end);
   }
 
   @override
-  cnvrt.ByteConversionSink startChunkedConversion(Sink<String> sink) {
-    cnvrt.StringConversionSink stringSink;
-    if (sink is cnvrt.StringConversionSink) {
+  dart_convert.ByteConversionSink startChunkedConversion(Sink<String> sink) {
+    dart_convert.StringConversionSink stringSink;
+    if (sink is dart_convert.StringConversionSink) {
       stringSink = sink;
     } else {
-      stringSink = cnvrt.StringConversionSink.from(sink);
+      stringSink = dart_convert.StringConversionSink.from(sink);
     }
-    return BaseDecoderSink(stringSink, allowInvalid, this);
+    return BaseDecoderSink(stringSink, this, allowInvalid: allowInvalid);
   }
 }
 
-/// Provides a simple, non chunkable 8bit encoder.
-class BaseEncoder extends cnvrt.Converter<String, List<int>> {
-  final bool allowInvalid;
-  final Map<int, int> encodingMap;
-  final int startIndex;
-
+/// Provides a simple 8bit encoder.
+class BaseEncoder extends dart_convert.Converter<String, List<int>> {
   /// Creates a new encoder.
   ///
-  /// Set [allowedInvalid] to true in case invalid characters should be translated to question marks.
+  /// Set [allowInvalid] to true in case invalid characters should be
+  /// translated to question marks.
   const BaseEncoder(this.encodingMap, this.startIndex,
       {this.allowInvalid = false});
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, then an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  /// All encodings
+  final Map<int, int> encodingMap;
+
+  /// The index of the first non-ASCII character
+  final int startIndex;
 
   /// Static helper function to generate a conversion map from a symbols string.
   static Map<int, int> createEncodingMap(String symbols, int startIndex) {
@@ -70,8 +92,9 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
     final map = <int, int>{};
     var index = 0;
     if (runes.length != 255 - startIndex) {
-      print(
-          'WARNING: there are not ${255 - startIndex} symbols but ${runes.length} runes in the specified map - is the given startIndex $startIndex correct?');
+      print('WARNING: there are not ${255 - startIndex} symbols '
+          'but ${runes.length} runes in the specified map - '
+          'is the given startIndex $startIndex correct?');
     }
     for (final rune in runes) {
       if (rune != 0x3F) {
@@ -82,7 +105,8 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
           final firstIndex = symbols.indexOf(symbol);
           final lastIndex = symbols.lastIndexOf(symbol);
           throw FormatException(
-              'Duplicate value $value for isoSymbols "$symbol" at index $index - in symbols to found at $firstIndex and $lastIndex');
+              'Duplicate value $value for isoSymbols "$symbol" at index $index '
+              '- in symbols to found at $firstIndex and $lastIndex');
         }
         if (value <= startIndex) {
           final symbol = symbols.substring(index, index + 1);
@@ -100,9 +124,9 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
   @override
   List<int> convert(String input, [int start = 0, int? end]) {
     var runesList = input.runes.toList(growable: false);
-    end = RangeError.checkValidRange(start, end, runesList.length);
-    if (start > 0 || end < runesList.length) {
-      runesList = runesList.sublist(start, end);
+    final usedEnd = RangeError.checkValidRange(start, end, runesList.length);
+    if (start > 0 || usedEnd < runesList.length) {
+      runesList = runesList.sublist(start, usedEnd);
     }
     for (var i = 0; i < runesList.length; i++) {
       final rune = runesList[i];
@@ -111,7 +135,8 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
         if (value == null) {
           if (!allowInvalid) {
             throw FormatException(
-                'Invalid value in input: "${String.fromCharCode(rune)}" / ($rune) at index $i');
+                'Invalid value in input: "${String.fromCharCode(rune)}" '
+                '/ ($rune) at index $i');
           } else {
             runesList[i] = 0x3F; // ?
           }
@@ -124,12 +149,13 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
   }
 
   @override
-  cnvrt.StringConversionSink startChunkedConversion(Sink<List<int>> sink) {
-    cnvrt.ByteConversionSink byteSink;
-    if (sink is cnvrt.ByteConversionSink) {
+  dart_convert.StringConversionSink startChunkedConversion(
+      Sink<List<int>> sink) {
+    dart_convert.ByteConversionSink byteSink;
+    if (sink is dart_convert.ByteConversionSink) {
       byteSink = sink;
     } else {
-      byteSink = cnvrt.ByteConversionSink.from(sink);
+      byteSink = dart_convert.ByteConversionSink.from(sink);
     }
     return BaseEncoderSink(byteSink, this);
   }
@@ -138,12 +164,25 @@ class BaseEncoder extends cnvrt.Converter<String, List<int>> {
 /// Decoder sink for chunked conversion.
 ///
 /// Compare `BaseDecoder.startChunkedConversion(...)`.
-class BaseDecoderSink extends cnvrt.ByteConversionSinkBase {
-  final cnvrt.StringConversionSink sink;
-  final bool allowInvalid;
-  final BaseDecoder decoder;
+class BaseDecoderSink extends dart_convert.ByteConversionSinkBase {
+  /// Creates a new basic decoder sink
+  BaseDecoderSink(
+    this.sink,
+    this.decoder, {
+    required this.allowInvalid,
+  });
 
-  BaseDecoderSink(this.sink, this.allowInvalid, this.decoder);
+  /// The used string conversion sink
+  final dart_convert.StringConversionSink sink;
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, then an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  /// The used decoder
+  final BaseDecoder decoder;
 
   @override
   void close() {
@@ -156,16 +195,18 @@ class BaseDecoderSink extends cnvrt.ByteConversionSinkBase {
   }
 
   @override
-  void addSlice(List<int> source, int start, int end, bool isLast) {
-    RangeError.checkValidRange(start, end, source.length);
-    if (start == end) return;
-    if (!allowInvalid && source is! Uint8List) {
+  void addSlice(List<int> chunk, int start, int end, bool isLast) {
+    RangeError.checkValidRange(start, end, chunk.length);
+    if (start == end) {
+      return;
+    }
+    if (!allowInvalid && chunk is! Uint8List) {
       // List may contain value outside of the 0..255 range. If so, throw.
       // Technically, we could excuse Uint8ClampedList as well, but it unlikely
       // to be relevant.
-      _checkValid8Bit(source, start, end);
+      _checkValid8Bit(chunk, start, end);
     }
-    _addSliceToSink(source, start, end, isLast);
+    _addSliceToSink(chunk, start, end, isLast);
   }
 
   void _addSliceToSink(List<int> source, int start, int end, bool isLast) {
@@ -178,10 +219,11 @@ class BaseDecoderSink extends cnvrt.ByteConversionSinkBase {
 
   void _checkValid8Bit(List<int> source, int start, int end) {
     for (var i = start; i < end; i++) {
-      var char = source[i];
+      final char = source[i];
       if (char < 0 || char > 0xff) {
         throw FormatException(
-            'Source contains non-8-bit character code 0x${char.toRadixString(16)} at $i.',
+            'Source contains non-8-bit character '
+            'code 0x${char.toRadixString(16)} at $i.',
             source,
             i);
       }
@@ -191,12 +233,16 @@ class BaseDecoderSink extends cnvrt.ByteConversionSinkBase {
 
 /// Encoder sink for chunked conversion.
 ///
-/// Compare `BaseEncoder.startChunkedConversion(...)`.
-class BaseEncoderSink extends cnvrt.StringConversionSinkBase {
-  final cnvrt.ByteConversionSink sink;
-  final BaseEncoder encoder;
-
+/// Compare [BaseEncoder.startChunkedConversion].
+class BaseEncoderSink extends dart_convert.StringConversionSinkBase {
+  /// Creates a new basic encoder sink
   BaseEncoderSink(this.sink, this.encoder);
+
+  /// The used byte conversion sink
+  final dart_convert.ByteConversionSink sink;
+
+  /// The used encoder
+  final BaseEncoder encoder;
 
   @override
   void close() {
@@ -204,16 +250,18 @@ class BaseEncoderSink extends cnvrt.StringConversionSinkBase {
   }
 
   @override
-  void add(String chunk) {
-    addSlice(chunk, 0, chunk.length, false);
+  void add(String str) {
+    addSlice(str, 0, str.length, false);
   }
 
   @override
-  void addSlice(String source, int start, int end, bool isLast) {
-    RangeError.checkValidRange(start, end, source.length);
-    if (start == end) return;
+  void addSlice(String str, int start, int end, bool isLast) {
+    RangeError.checkValidRange(start, end, str.length);
+    if (start == end) {
+      return;
+    }
 
-    final sliceData = encoder.convert(source, start, end);
+    final sliceData = encoder.convert(str, start, end);
     sink.add(sliceData);
     if (isLast) {
       close();

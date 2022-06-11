@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 13 / iso-8859-13 codec for easy encoding and decoding.
+class Latin13Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin13Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin13Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin13Decoder get decoder => allowInvalid
+      ? const Latin13Decoder(allowInvalid: true)
+      : const Latin13Decoder(allowInvalid: false);
+
+  @override
+  Latin13Encoder get encoder => allowInvalid
+      ? const Latin13Encoder(allowInvalid: true)
+      : const Latin13Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-13';
+}
+
+/// Encodes texts into latin 13 / iso-88513-13 data
+class Latin13Encoder extends LatinEncoder {
+  /// Creates a new [Latin13Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin13Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin13SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 13 /  iso-88513-13 data.
+class Latin13Decoder extends LatinDecoder {
+  /// Creates a new [Latin13Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin13Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin13Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin13Symbols =
+// ignore: lines_longer_than_80_chars
     '”¢£¤„¦§Ø©Ŗ«¬\u{00AD}®Æ°±²³“µ¶·ø¹ŗ»¼½¾æĄĮĀĆÄÅĘĒČÉŹĖĢĶĪĻŠŃŅÓŌÕÖ×ŲŁŚŪÜŻŽßąįāćäåęēčéźėģķīļšńņóōõö÷ųłśūüżž’';
 const Map<int, int> _latin13SymbolMap = {
   8221: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin13SymbolMap = {
   382: 254,
   8217: 255,
 };
-
-/// Provides a latin 13 / iso-8859-13 codec for easy encoding and decoding.
-class Latin13Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin13Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin13Decoder get decoder => allowInvalid
-      ? const Latin13Decoder(allowInvalid: true)
-      : const Latin13Decoder(allowInvalid: false);
-
-  @override
-  Latin13Encoder get encoder => allowInvalid
-      ? const Latin13Encoder(allowInvalid: true)
-      : const Latin13Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-13';
-}
-
-/// Encodes texts into latin 13 / iso-88513-13 data
-class Latin13Encoder extends LatinEncoder {
-  const Latin13Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin13SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 13 /  iso-88513-13 data.
-class Latin13Decoder extends LatinDecoder {
-  const Latin13Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin13Symbols, allowInvalid: allowInvalid);
-}

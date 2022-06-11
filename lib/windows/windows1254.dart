@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
-import 'package:enough_convert/windows/windows.dart';
+import 'windows.dart';
 
+/// Provides a windows 1254 / cp1254 codec for easy encoding and decoding.
+class Windows1254Codec extends dart_convert.Encoding {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Windows1254Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Windows1254Decoder get decoder => allowInvalid
+      ? const Windows1254Decoder(allowInvalid: true)
+      : const Windows1254Decoder(allowInvalid: false);
+
+  @override
+  Windows1254Encoder get encoder => allowInvalid
+      ? const Windows1254Encoder(allowInvalid: true)
+      : const Windows1254Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'windows-1254';
+}
+
+/// Decodes windows 1254 / cp1254 data.
+class Windows1254Decoder extends WindowsDecoder {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Windows1254Decoder({
+    bool allowInvalid = false,
+  }) : super(_cp1254Symbols, allowInvalid: allowInvalid);
+}
+
+/// Encodes texts into windows 1254 data
+class Windows1254Encoder extends WindowsEncoder {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Windows1254Encoder({
+    bool allowInvalid = false,
+  }) : super(_cp1254Map, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _cp1254Symbols =
+// ignore: lines_longer_than_80_chars
     '€?‚ƒ„…†‡ˆ‰Š‹Œ????‘’“”•–—˜™š›œ??Ÿ\u{00A0}¡¢£¤¥¦§¨©ª«¬\u{00AD}®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ';
 const Map<int, int> _cp1254Map = {
   8364: 128,
@@ -127,46 +181,3 @@ const Map<int, int> _cp1254Map = {
   351: 254,
   255: 255,
 };
-
-/// Provides a windows 1254 / cp1254 codec for easy encoding and decoding.
-class Windows1254Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Windows1254Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Windows1254Decoder get decoder => allowInvalid
-      ? const Windows1254Decoder(allowInvalid: true)
-      : const Windows1254Decoder(allowInvalid: false);
-
-  @override
-  Windows1254Encoder get encoder => allowInvalid
-      ? const Windows1254Encoder(allowInvalid: true)
-      : const Windows1254Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'windows-1254';
-}
-
-/// Decodes windows 1254 / cp1254 data.
-class Windows1254Decoder extends WindowsDecoder {
-  const Windows1254Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_cp1254Symbols, allowInvalid: allowInvalid);
-}
-
-/// Encodes texts into windows 1254 data
-class Windows1254Encoder extends WindowsEncoder {
-  const Windows1254Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_cp1254Map, allowInvalid: allowInvalid);
-}

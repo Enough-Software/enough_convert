@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 9 / iso-8859-9 codec for easy encoding and decoding.
+class Latin9Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin9Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin9Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin9Decoder get decoder => allowInvalid
+      ? const Latin9Decoder(allowInvalid: true)
+      : const Latin9Decoder(allowInvalid: false);
+
+  @override
+  Latin9Encoder get encoder => allowInvalid
+      ? const Latin9Encoder(allowInvalid: true)
+      : const Latin9Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-9';
+}
+
+/// Encodes texts into latin 9 / iso-8859-9 data
+class Latin9Encoder extends LatinEncoder {
+  /// Creates a new [Latin9Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin9Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin9SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 9 /  iso-8859-9 data.
+class Latin9Decoder extends LatinDecoder {
+  /// Creates a new [Latin9Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin9Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin9Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin9Symbols =
+// ignore: lines_longer_than_80_chars
     '¡¢£¤¥¦§¨©ª«¬\u{00AD}®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ';
 const Map<int, int> _latin9SymbolMap = {
   161: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin9SymbolMap = {
   351: 254,
   255: 255,
 };
-
-/// Provides a latin 9 / iso-8859-9 codec for easy encoding and decoding.
-class Latin9Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin9Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin9Decoder get decoder => allowInvalid
-      ? const Latin9Decoder(allowInvalid: true)
-      : const Latin9Decoder(allowInvalid: false);
-
-  @override
-  Latin9Encoder get encoder => allowInvalid
-      ? const Latin9Encoder(allowInvalid: true)
-      : const Latin9Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-9';
-}
-
-/// Encodes texts into latin 9 / iso-8859-9 data
-class Latin9Encoder extends LatinEncoder {
-  const Latin9Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin9SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 9 /  iso-8859-9 data.
-class Latin9Decoder extends LatinDecoder {
-  const Latin9Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin9Symbols, allowInvalid: allowInvalid);
-}

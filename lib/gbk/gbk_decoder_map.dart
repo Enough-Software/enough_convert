@@ -1,6 +1,11 @@
-// Forked from https://github.com/lixiangthinker/fast_gbk
-//https://ssl.icu-project.org/repos/icu/data/trunk/charset/source/gb18030/gbkuni30.txt
-Map<int, int> gbkToUtf16Map = {
+part of 'gbk.dart';
+
+
+/// The GPK decoder map
+///
+/// Forked from https://github.com/lixiangthinker/fast_gbk
+/// https://ssl.icu-project.org/repos/icu/data/trunk/charset/source/gb18030/gbkuni30.txt
+const Map<int, int> _gbkToUtf16Map = {
   41448: 164,
   41452: 167,
   41383: 168,

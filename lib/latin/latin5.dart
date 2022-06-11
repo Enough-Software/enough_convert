@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 5 / iso-8859-5 codec for easy encoding and decoding.
+class Latin5Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin5Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin5Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin5Decoder get decoder => allowInvalid
+      ? const Latin5Decoder(allowInvalid: true)
+      : const Latin5Decoder(allowInvalid: false);
+
+  @override
+  Latin5Encoder get encoder => allowInvalid
+      ? const Latin5Encoder(allowInvalid: true)
+      : const Latin5Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-5';
+}
+
+/// Encodes texts into latin 5 / iso-8859-5 data
+class Latin5Encoder extends LatinEncoder {
+  /// Creates a new [Latin5Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin5Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin5SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 5 /  iso-8859-5 data.
+class Latin5Decoder extends LatinDecoder {
+  /// Creates a new [Latin5Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin5Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin5Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin5Symbols =
+// ignore: lines_longer_than_80_chars
     'ЁЂЃЄЅІЇЈЉЊЋЌ\u{00AD}ЎЏАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя№ёђѓєѕіїјљњћќ§ўџ';
 const Map<int, int> _latin5SymbolMap = {
   1025: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin5SymbolMap = {
   1118: 254,
   1119: 255,
 };
-
-/// Provides a latin 5 / iso-8859-5 codec for easy encoding and decoding.
-class Latin5Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin5Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin5Decoder get decoder => allowInvalid
-      ? const Latin5Decoder(allowInvalid: true)
-      : const Latin5Decoder(allowInvalid: false);
-
-  @override
-  Latin5Encoder get encoder => allowInvalid
-      ? const Latin5Encoder(allowInvalid: true)
-      : const Latin5Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-5';
-}
-
-/// Encodes texts into latin 5 / iso-8859-5 data
-class Latin5Encoder extends LatinEncoder {
-  const Latin5Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin5SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 5 /  iso-8859-5 data.
-class Latin5Decoder extends LatinDecoder {
-  const Latin5Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin5Symbols, allowInvalid: allowInvalid);
-}

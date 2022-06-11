@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 7 / iso-8859-7 codec for easy encoding and decoding.
+class Latin7Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin7Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin7Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin7Decoder get decoder => allowInvalid
+      ? const Latin7Decoder(allowInvalid: true)
+      : const Latin7Decoder(allowInvalid: false);
+
+  @override
+  Latin7Encoder get encoder => allowInvalid
+      ? const Latin7Encoder(allowInvalid: true)
+      : const Latin7Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-7';
+}
+
+/// Encodes texts into latin 7 / iso-8859-7 data
+class Latin7Encoder extends LatinEncoder {
+  /// Creates a new [Latin7Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin7Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin7SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 7 /  iso-8859-7 data.
+class Latin7Decoder extends LatinDecoder {
+  /// Creates a new [Latin7Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin7Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin7Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin7Symbols =
+// ignore: lines_longer_than_80_chars
     '‘’£€₯¦§¨©ͺ«¬\u{00AD}?―°±²³΄΅Ά·ΈΉΊ»Ό½ΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡ?ΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώ?';
 const Map<int, int> _latin7SymbolMap = {
   8216: 161,
@@ -98,46 +152,3 @@ const Map<int, int> _latin7SymbolMap = {
   973: 253,
   974: 254,
 };
-
-/// Provides a latin 7 / iso-8859-7 codec for easy encoding and decoding.
-class Latin7Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin7Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin7Decoder get decoder => allowInvalid
-      ? const Latin7Decoder(allowInvalid: true)
-      : const Latin7Decoder(allowInvalid: false);
-
-  @override
-  Latin7Encoder get encoder => allowInvalid
-      ? const Latin7Encoder(allowInvalid: true)
-      : const Latin7Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-7';
-}
-
-/// Encodes texts into latin 7 / iso-8859-7 data
-class Latin7Encoder extends LatinEncoder {
-  const Latin7Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin7SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 7 /  iso-8859-7 data.
-class Latin7Decoder extends LatinDecoder {
-  const Latin7Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin7Symbols, allowInvalid: allowInvalid);
-}

@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 3 / iso-8859-3 codec for easy encoding and decoding.
+class Latin3Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin3Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin3Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin3Decoder get decoder => allowInvalid
+      ? const Latin3Decoder(allowInvalid: true)
+      : const Latin3Decoder(allowInvalid: false);
+
+  @override
+  Latin3Encoder get encoder => allowInvalid
+      ? const Latin3Encoder(allowInvalid: true)
+      : const Latin3Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-3';
+}
+
+/// Encodes texts into latin 3 / iso-8859-3 data
+class Latin3Encoder extends LatinEncoder {
+  /// Creates a new [Latin3Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin3Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin3SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 3 /  iso-8859-3 data.
+class Latin3Decoder extends LatinDecoder {
+  /// Creates a new [Latin3Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin3Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin3Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin3Symbols =
+// ignore: lines_longer_than_80_chars
     'Ħ˘£¤?Ĥ§¨İŞĞĴ\u{00AD}?Ż°ħ²³´µĥ·¸ışğĵ½?żÀÁÂ?ÄĊĈÇÈÉÊËÌÍÎÏ?ÑÒÓÔĠÖ×ĜÙÚÛÜŬŜßàáâ?äċĉçèéêëìíîï?ñòóôġö÷ĝùúûüŭŝ˙';
 const Map<int, int> _latin3SymbolMap = {
   294: 161,
@@ -94,46 +148,3 @@ const Map<int, int> _latin3SymbolMap = {
   349: 254,
   729: 255,
 };
-
-/// Provides a latin 3 / iso-8859-3 codec for easy encoding and decoding.
-class Latin3Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin3Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin3Decoder get decoder => allowInvalid
-      ? const Latin3Decoder(allowInvalid: true)
-      : const Latin3Decoder(allowInvalid: false);
-
-  @override
-  Latin3Encoder get encoder => allowInvalid
-      ? const Latin3Encoder(allowInvalid: true)
-      : const Latin3Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-3';
-}
-
-/// Encodes texts into latin 3 / iso-8859-3 data
-class Latin3Encoder extends LatinEncoder {
-  const Latin3Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin3SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 3 /  iso-8859-3 data.
-class Latin3Decoder extends LatinDecoder {
-  const Latin3Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin3Symbols, allowInvalid: allowInvalid);
-}

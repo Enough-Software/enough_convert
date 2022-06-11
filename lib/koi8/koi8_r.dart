@@ -1,11 +1,64 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
-import 'package:enough_convert/koi8/koi8.dart';
+import 'koi8.dart';
 
-const String _koi8_r_symbols =
+/// A codec for the KOI8-r encoding
+class Koi8rCodec extends dart_convert.Encoding {
+  /// Creates a new [Koi8rCodec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Koi8rCodec({this.allowInvalid = false});
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Koi8rDecoder get decoder => allowInvalid
+      ? const Koi8rDecoder(allowInvalid: true)
+      : const Koi8rDecoder(allowInvalid: false);
+
+  @override
+  // TODO: implement encoder
+  Koi8rEncoder get encoder => allowInvalid
+      ? const Koi8rEncoder(allowInvalid: true)
+      : const Koi8rEncoder(allowInvalid: false);
+
+  @override
+  String get name => 'KOI8-R';
+}
+
+/// The KOI8-r compatible encoder
+class Koi8rEncoder extends KoiEncoder {
+  /// Creates a new [Koi8rEncoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Koi8rEncoder({
+    bool allowInvalid = false,
+  }) : super(_koi8rSymbolMap, allowInvalid: allowInvalid);
+}
+
+/// A KOI8-r compatible decoder
+class Koi8rDecoder extends KoiDecoder {
+  /// Creates a new [KoiDecoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Koi8rDecoder({
+    bool allowInvalid = false,
+  }) : super(_koi8rSymbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
+const String _koi8rSymbols =
+// ignore: lines_longer_than_80_chars
     '─│┌┐└┘├┤┬┴┼▀▄█▌▐░▒▓⌠■∙√≈≤≥\u{00A0}⌡°²·÷═║╒ё╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡Ё╢╣╤╥╦╧╨╩╪╫╬©юабцдефгхийклмнопярстужвьызшэщчъЮАБЦДЕФГХИЙКЛМНОПЯРСТУЖВЬЫЗШЭЩЧЪ';
 
-const Map<int, int> _koi8_rSymbolMap = {
+const Map<int, int> _koi8rSymbolMap = {
   9472: 128,
   9474: 129,
   9484: 130,
@@ -135,35 +188,3 @@ const Map<int, int> _koi8_rSymbolMap = {
   1063: 254,
   1066: 255
 };
-
-class Koi8rCodec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  const Koi8rCodec({this.allowInvalid = false});
-
-  @override
-  Koi8rDecoder get decoder => allowInvalid
-      ? Koi8rDecoder(allowInvalid: true)
-      : Koi8rDecoder(allowInvalid: false);
-
-  @override
-  // TODO: implement encoder
-  Koi8rEncoder get encoder => allowInvalid
-      ? Koi8rEncoder(allowInvalid: true)
-      : Koi8rEncoder(allowInvalid: false);
-
-  @override
-  String get name => 'KOI8-R';
-}
-
-class Koi8rDecoder extends KoiDecoder {
-  const Koi8rDecoder({
-    bool allowInvalid = false,
-  }) : super(_koi8_r_symbols, allowInvalid: allowInvalid);
-}
-
-class Koi8rEncoder extends KoiEncoder {
-  Koi8rEncoder({
-    bool allowInvalid = false,
-  }) : super(_koi8_rSymbolMap, allowInvalid: allowInvalid);
-}

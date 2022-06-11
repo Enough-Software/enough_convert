@@ -1,16 +1,16 @@
-// Forked from https://github.com/lixiangthinker/fast_gbk
+/// Forked from https://github.com/lixiangthinker/fast_gbk
 
 import 'dart:convert';
 import 'dart:typed_data';
-import 'gbk_encoder_map.dart';
-import 'gbk_decoder_map.dart';
+
+part 'gbk_decoder_map.dart';
+part 'gbk_encoder_map.dart';
 
 /// The GBK Replacement character `U+E7B3` (). GBK 0xA7F6
-const int replacementCharacterUnicode = 0xE7B3;
-const int replacementCharacterGBK = 0xA7F6;
+const int _replacementCharacterGBK = 0xA7F6;
 
 /// The Unicode Byte Order Marker (BOM) character `U+FEFF`.
-const int unicodeBomCharacterRune = 0xFEFF;
+const int _unicodeBomCharacterRune = 0xFEFF;
 
 /// An instance of the default implementation of the [GbkCodec].
 ///
@@ -22,13 +22,11 @@ const int unicodeBomCharacterRune = 0xFEFF;
 ///     List<int> encoded = gbk.encode('白日依山尽，黄河入海流');
 ///     String decoded = gbk.decode([0xA1,0xE8,0xA1,0xEC,
 ///                                   0xA1,0xA7,0xA1,0xE3,0xA1,0xC0]);
-GbkCodec gbk = GbkCodec();
+const GbkCodec gbk = GbkCodec();
 
 /// A [GbkCodec] encodes strings to GBK code units (bytes) and decodes
 /// GBK code units to strings.
 class GbkCodec extends Encoding {
-  final bool _allowInvalid;
-
   /// Instantiates a new [GbkCodec].
   ///
   /// The optional [allowInvalid] argument defines how [decoder] (and [decode])
@@ -40,6 +38,8 @@ class GbkCodec extends Encoding {
   /// they throw a [FormatException].
   const GbkCodec({bool allowInvalid = false}) : _allowInvalid = allowInvalid;
 
+  final bool _allowInvalid;
+
   /// The name of this codec, 'gbk'.
   @override
   String get name => 'gbk';
@@ -48,7 +48,7 @@ class GbkCodec extends Encoding {
   /// corresponding string.
   ///
   /// If the [codeUnits] start with the encoding of a
-  /// [unicodeBomCharacterRune], that character is discarded.
+  /// [_unicodeBomCharacterRune], that character is discarded.
   ///
   /// If [allowInvalid] is `true` the decoder replaces invalid (or
   /// unterminated) character sequences with the Unicode Replacement character
@@ -57,15 +57,13 @@ class GbkCodec extends Encoding {
   /// If [allowInvalid] is not given, it defaults to the `allowInvalid` that
   /// was used to instantiate `this`.
   @override
-  String decode(List<int> codeUnits, {bool? allowInvalid}) {
-    allowInvalid ??= _allowInvalid;
-    return GbkDecoder(allowInvalid: allowInvalid).convert(codeUnits);
-  }
+  String decode(List<int> codeUnits, {bool? allowInvalid}) =>
+      GbkDecoder(allowInvalid: allowInvalid ?? _allowInvalid)
+          .convert(codeUnits);
 
   @override
-  GbkDecoder get decoder {
-    return GbkDecoder(allowInvalid: _allowInvalid);
-  }
+  GbkDecoder get decoder =>
+      _allowInvalid ? const GbkDecoder(allowInvalid: true) : const GbkDecoder();
 
   @override
   GbkEncoder get encoder => const GbkEncoder();
@@ -74,6 +72,7 @@ class GbkCodec extends Encoding {
 /// This class converts strings to their GBK code units (a list of
 /// unsigned 8-bit integers).
 class GbkEncoder extends Converter<String, List<int>> {
+  /// Creates a new [GbkEncoder]
   const GbkEncoder();
 
   /// Converts [string] to its GBK code units (a list of
@@ -83,13 +82,15 @@ class GbkEncoder extends Converter<String, List<int>> {
   /// `string.substring(start, end)` is converted.
   @override
   Uint8List convert(String string, [int start = 0, int? end]) {
-    var stringLength = string.length;
-    end = RangeError.checkValidRange(start, end, stringLength);
-    var length = end - start;
-    if (length == 0) return Uint8List(0);
+    final stringLength = string.length;
+    final usedEnd = RangeError.checkValidRange(start, end, stringLength);
+    final length = usedEnd - start;
+    if (length == 0) {
+      return Uint8List(0);
+    }
 
-    var encoder = _GbkStreamEncoder.withBufferSize(stringLength * 2);
-    var ending = encoder.encode(string, start, end);
+    final encoder = _GbkStreamEncoder.withBufferSize(stringLength * 2);
+    final ending = encoder.encode(string, start, usedEnd);
     return encoder._buffer.sublist(0, ending);
   }
 
@@ -98,11 +99,10 @@ class GbkEncoder extends Converter<String, List<int>> {
   /// The converter works more efficiently if the given [sink] is a
   /// [ByteConversionSink].
   @override
-  StringConversionSink startChunkedConversion(Sink<List<int>> sink) {
-    return _GbkEncoderSink(
-        (sink is ByteConversionSink) ? sink : ByteConversionSink.from(sink),
-        _GbkStreamEncoder());
-  }
+  StringConversionSink startChunkedConversion(Sink<List<int>> sink) =>
+      _GbkEncoderSink(
+          (sink is ByteConversionSink) ? sink : ByteConversionSink.from(sink),
+          _GbkStreamEncoder());
 
   // Override the base-classes bind, to provide a better type.
   @override
@@ -111,28 +111,28 @@ class GbkEncoder extends Converter<String, List<int>> {
 
 /// This class encodes Strings to UTF-8 code units (unsigned 8 bit integers).
 class _GbkStreamEncoder {
-  final Uint8List _buffer;
-
-  static const _DEFAULT_BYTE_BUFFER_SIZE = 1024;
-
-  _GbkStreamEncoder() : this.withBufferSize(_DEFAULT_BYTE_BUFFER_SIZE);
+  _GbkStreamEncoder() : this.withBufferSize(_defaultByteBufferSize);
 
   _GbkStreamEncoder.withBufferSize(int bufferSize)
       : _buffer = _createBuffer(bufferSize);
+
+  final Uint8List _buffer;
+
+  static const _defaultByteBufferSize = 1024;
 
   /// Allow an implementation to pick the most efficient way of storing bytes.
   static Uint8List _createBuffer(int size) => Uint8List(size);
 
   int encode(String input, int start, int end) {
-    var source = input.codeUnits;
+    final source = input.codeUnits;
     var srcIndex = 0;
     var targetIndex = 0;
 
     while (srcIndex < source.length) {
-      var codeUnit = source[srcIndex];
+      final codeUnit = source[srcIndex];
       // ignore non-BMP String character
       if (_isLeadSurrogate(codeUnit) || _isTailSurrogate(codeUnit)) {
-        _buffer[targetIndex++] = replacementCharacterGBK;
+        _buffer[targetIndex++] = _replacementCharacterGBK;
         srcIndex++;
         srcIndex++;
         continue;
@@ -144,15 +144,14 @@ class _GbkStreamEncoder {
         continue;
       }
 
-      var gbkCode = utf16ToGBKMap[codeUnit];
+      final gbkCode = _utf16ToGBKMap[codeUnit];
       if (gbkCode != null) {
         _buffer[targetIndex++] = (gbkCode >> 8) & 0xff;
         _buffer[targetIndex++] = gbkCode & 0xff;
       } else {
         // unknown GBK code;
-        _buffer[targetIndex++] = (replacementCharacterGBK >> 8) & 0xff;
-        ;
-        _buffer[targetIndex++] = replacementCharacterGBK & 0xff;
+        _buffer[targetIndex++] = (_replacementCharacterGBK >> 8) & 0xff;
+        _buffer[targetIndex++] = _replacementCharacterGBK & 0xff;
       }
       srcIndex++;
     }
@@ -164,10 +163,9 @@ class _GbkStreamEncoder {
 /// integers).
 /// stateless, String input, 2Bytes GBK output.
 class _GbkEncoderSink with StringConversionSinkMixin {
+  _GbkEncoderSink(this._sink, this._encoder);
   final ByteConversionSink _sink;
   final _GbkStreamEncoder _encoder;
-
-  _GbkEncoderSink(this._sink, this._encoder);
 
   @override
   void close() {
@@ -176,18 +174,17 @@ class _GbkEncoderSink with StringConversionSinkMixin {
 
   @override
   void addSlice(String input, int start, int end, bool isLast) {
-    var index = _encoder.encode(input, start, end);
+    final index = _encoder.encode(input, start, end);
     _sink.addSlice(_encoder._buffer, 0, index, isLast);
-
-    if (isLast) close();
+    if (isLast) {
+      close();
+    }
   }
 }
 
 /// This class converts GBK code units (lists of unsigned 8-bit integers)
 /// to a string.
 class GbkDecoder extends Converter<List<int>, String> {
-  final bool _allowInvalid;
-
   /// Instantiates a new [GbkDecoder].
   ///
   /// The optional [allowInvalid] argument defines how [convert] deals
@@ -198,6 +195,8 @@ class GbkDecoder extends Converter<List<int>, String> {
   /// it throws a [FormatException].
   const GbkDecoder({bool allowInvalid = false}) : _allowInvalid = allowInvalid;
 
+  final bool _allowInvalid;
+
   /// Converts the GBK [codeUnits] (a list of unsigned 8-bit integers) to the
   /// corresponding string.
   ///
@@ -205,19 +204,21 @@ class GbkDecoder extends Converter<List<int>, String> {
   /// If [end] is omitted, it defaults to `codeUnits.length`.
   ///
   /// If the [codeUnits] start with the encoding of a
-  /// [unicodeBomCharacterRune], that character is discarded.
+  /// [_unicodeBomCharacterRune], that character is discarded.
   @override
   String convert(List<int> codeUnits, [int start = 0, int? end]) {
     final length = codeUnits.length;
-    end = RangeError.checkValidRange(start, end, length);
+    final usedEnd = RangeError.checkValidRange(start, end, length);
+    var usedStart = start;
 
     // Fast case for ASCII strings avoids StringBuffer / decodeMap.
-    var oneBytes = _scanOneByteCharacters(codeUnits, start, end);
+    final oneBytes = _scanOneByteCharacters(codeUnits, start, usedEnd);
     StringBuffer buffer;
     if (oneBytes > 0) {
-      var firstPart = String.fromCharCodes(codeUnits, start, start + oneBytes);
-      start += oneBytes;
-      if (start == end) {
+      final firstPart =
+          String.fromCharCodes(codeUnits, usedStart, usedStart + oneBytes);
+      usedStart += oneBytes;
+      if (usedStart == usedEnd) {
         return firstPart;
       }
       buffer = StringBuffer(firstPart);
@@ -225,9 +226,9 @@ class GbkDecoder extends Converter<List<int>, String> {
       buffer = StringBuffer();
     }
 
-    final decoder = _GbkStreamDecoder(buffer, _allowInvalid);
-    decoder.convert(codeUnits, start, end);
-    decoder.flush(codeUnits, end);
+    _GbkStreamDecoder(buffer, allowInvalid: _allowInvalid)
+      ..convert(codeUnits, usedStart, usedEnd)
+      ..flush(codeUnits, usedEnd);
     return buffer.toString();
   }
 
@@ -244,37 +245,35 @@ class GbkDecoder extends Converter<List<int>, String> {
       stringSink = StringConversionSink.from(sink);
     }
 
-    return _GbkConversionSink(stringSink, _allowInvalid);
+    return _GbkConversionSink(stringSink, allowInvalid: _allowInvalid);
   }
 
   // Override the base-classes bind, to provide a better type.
   @override
-  Stream<String> bind(Stream<List<int>> stream) {
-    return super.bind(stream);
-  }
+  Stream<String> bind(Stream<List<int>> stream) => super.bind(stream);
 }
 
 /// Decodes GBK code units.
 ///
 /// Forwards the decoded strings to the given [StringConversionSink].
 class _GbkConversionSink extends ByteConversionSink {
-  final _GbkStreamDecoder _decoder;
-  final StringConversionSink _chunkedSink;
-  final StringBuffer _buffer;
-
-  _GbkConversionSink(StringConversionSink sink, bool allowInvalid)
+  _GbkConversionSink(StringConversionSink sink, {required bool allowInvalid})
       : this._(sink, StringBuffer(), allowInvalid);
 
   _GbkConversionSink._(
       this._chunkedSink, StringBuffer stringBuffer, bool allowInvalid)
-      : _decoder = _GbkStreamDecoder(stringBuffer, allowInvalid),
+      : _decoder = _GbkStreamDecoder(stringBuffer, allowInvalid: allowInvalid),
         _buffer = stringBuffer;
+
+  final _GbkStreamDecoder _decoder;
+  final StringConversionSink _chunkedSink;
+  final StringBuffer _buffer;
 
   @override
   void close() {
     _decoder.close();
     if (_buffer.isNotEmpty) {
-      var accumulated = _buffer.toString();
+      final accumulated = _buffer.toString();
       _buffer.clear();
       _chunkedSink.addSlice(accumulated, 0, accumulated.length, true);
     } else {
@@ -291,12 +290,14 @@ class _GbkConversionSink extends ByteConversionSink {
   void addSlice(List<int> chunk, int startIndex, int endIndex, bool isLast) {
     _decoder.convert(chunk, startIndex, endIndex);
     if (_buffer.isNotEmpty) {
-      var accumulated = _buffer.toString();
+      final accumulated = _buffer.toString();
       _chunkedSink.addSlice(accumulated, 0, accumulated.length, isLast);
       _buffer.clear();
       return;
     }
-    if (isLast) close();
+    if (isLast) {
+      close();
+    }
   }
 }
 
@@ -307,6 +308,8 @@ class _GbkConversionSink extends ByteConversionSink {
 /// init() -> convert -> convert -> ... -> close() -> flush()
 ///
 class _GbkStreamDecoder {
+  _GbkStreamDecoder(this._stringSink, {required bool allowInvalid})
+      : _allowInvalid = allowInvalid;
   // throw exception or not
   final bool _allowInvalid;
 
@@ -317,8 +320,6 @@ class _GbkStreamDecoder {
   var _firstByte = -1;
 
   bool get hasPartialInput => _firstByte > -1;
-
-  _GbkStreamDecoder(this._stringSink, this._allowInvalid);
 
   void close() {
     flush();
@@ -345,8 +346,8 @@ class _GbkStreamDecoder {
     var begin = startIndex;
     // if _firstByte > 0, we need to finish last time's job first.
     if (hasPartialInput) {
-      var code = ((_firstByte) << 8) + (codeUnits[0] & 0xff);
-      var char = gbkToUtf16Map[code];
+      final code = (_firstByte << 8) + (codeUnits[0] & 0xff);
+      final char = _gbkToUtf16Map[code];
       if (char == null && !_allowInvalid) {
         throw FormatException(
             'Bad GBK encoding 0x${code.toRadixString(16)}', code);
@@ -372,11 +373,11 @@ class _GbkStreamDecoder {
           _firstByte = code;
           return;
         }
-        code = ((code) << 8) + (codeUnits[index] & 0xff);
-        if (code == unicodeBomCharacterRune) {
+        code = (code << 8) + (codeUnits[index] & 0xff);
+        if (code == _unicodeBomCharacterRune) {
           continue;
         }
-        var char = gbkToUtf16Map[code];
+        final char = _gbkToUtf16Map[code];
         if (char == null && !_allowInvalid) {
           throw FormatException(
               'Bad GBK encoding 0x${code.toRadixString(16)}', code);
@@ -411,17 +412,20 @@ int _scanOneByteCharacters(List<int> units, int from, int endIndex) {
   final to = endIndex;
   for (var i = from; i < to; i++) {
     final unit = units[i];
-    if ((unit & _ONE_BYTE_LIMIT) != unit) return i - from;
+    if ((unit & _oneByteLimit) != unit) {
+      return i - from;
+    }
   }
   return to - from;
 }
 
 ///
 ///  For a character outside the Basic Multilingual Plane (plane 0) that is
-///  composed of a surrogate pair, [runes] combines the pair and returns a
+///  composed of a surrogate pair, runes combines the pair and returns a
 ///  single integer.  For example, the Unicode character for a
-///  musical G-clef ('𝄞') with rune value 0x1D11E consists of a UTF-16 surrogate
-///  pair: `0xD834` and `0xDD1E`. Using [codeUnits] returns the surrogate pair,
+///  musical G-clef ('𝄞') with rune value 0x1D11E consists of a UTF-16
+///  surrogate
+///  pair: `0xD834` and `0xDD1E`. Using codeUnits returns the surrogate pair,
 ///  and using `runes` returns their combined value:
 ///
 ///      var clef = '\u{1D11E}';
@@ -430,16 +434,16 @@ int _scanOneByteCharacters(List<int> units, int from, int endIndex) {
 ///
 /// UTF-16 constants.
 /// https://zh.wikipedia.org/wiki/UTF-16
-const int _SURROGATE_TAG_MASK = 0xFC00;
+const int _surrogateTagMask = 0xFC00;
 //const int _SURROGATE_VALUE_MASK = 0x3FF;
-const int _LEAD_SURROGATE_MIN = 0xD800;
-const int _TAIL_SURROGATE_MIN = 0xDC00;
+const int _leadSurrogateMin = 0xD800;
+const int _tailSurrogateMin = 0xDC00;
 
 bool _isLeadSurrogate(int codeUnit) =>
-    (codeUnit & _SURROGATE_TAG_MASK) == _LEAD_SURROGATE_MIN;
+    (codeUnit & _surrogateTagMask) == _leadSurrogateMin;
 
 bool _isTailSurrogate(int codeUnit) =>
-    (codeUnit & _SURROGATE_TAG_MASK) == _TAIL_SURROGATE_MIN;
+    (codeUnit & _surrogateTagMask) == _tailSurrogateMin;
 
-const int _ONE_BYTE_LIMIT = 0x7f; // 7 bits
-bool _isAscii(int codeUnit) => (codeUnit <= _ONE_BYTE_LIMIT);
+const int _oneByteLimit = 0x7f; // 7 bits
+bool _isAscii(int codeUnit) => codeUnit <= _oneByteLimit;

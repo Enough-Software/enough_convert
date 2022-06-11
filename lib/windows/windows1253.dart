@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
-import 'package:enough_convert/windows/windows.dart';
+import 'windows.dart';
 
+/// Provides a windows 1253 / cp1253 codec for easy encoding and decoding.
+class Windows1253Codec extends dart_convert.Encoding {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Windows1253Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Windows1253Decoder get decoder => allowInvalid
+      ? const Windows1253Decoder(allowInvalid: true)
+      : const Windows1253Decoder(allowInvalid: false);
+
+  @override
+  Windows1253Encoder get encoder => allowInvalid
+      ? const Windows1253Encoder(allowInvalid: true)
+      : const Windows1253Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'windows-1253';
+}
+
+/// Decodes windows 1253 / cp1253 data.
+class Windows1253Decoder extends WindowsDecoder {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Windows1253Decoder({
+    bool allowInvalid = false,
+  }) : super(_cp1253Symbols, allowInvalid: allowInvalid);
+}
+
+/// Encodes texts into windows 1253 data
+class Windows1253Encoder extends WindowsEncoder {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Windows1253Encoder({
+    bool allowInvalid = false,
+  }) : super(_cp1253Map, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _cp1253Symbols =
+// ignore: lines_longer_than_80_chars
     '€?‚ƒ„…†‡?‰?‹?????‘’“”•–—?™?›????\u{00A0}΅Ά£¤¥¦§¨©?«¬\u{00AD}®―°±²³΄µ¶·ΈΉΊ»Ό½ΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡ?ΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώ?';
 const Map<int, int> _cp1253Map = {
   8364: 128,
@@ -117,46 +171,3 @@ const Map<int, int> _cp1253Map = {
   973: 253,
   974: 254,
 };
-
-/// Provides a windows 1253 / cp1253 codec for easy encoding and decoding.
-class Windows1253Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Windows1253Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Windows1253Decoder get decoder => allowInvalid
-      ? const Windows1253Decoder(allowInvalid: true)
-      : const Windows1253Decoder(allowInvalid: false);
-
-  @override
-  Windows1253Encoder get encoder => allowInvalid
-      ? const Windows1253Encoder(allowInvalid: true)
-      : const Windows1253Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'windows-1253';
-}
-
-/// Decodes windows 1253 / cp1253 data.
-class Windows1253Decoder extends WindowsDecoder {
-  const Windows1253Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_cp1253Symbols, allowInvalid: allowInvalid);
-}
-
-/// Encodes texts into windows 1253 data
-class Windows1253Encoder extends WindowsEncoder {
-  const Windows1253Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_cp1253Map, allowInvalid: allowInvalid);
-}

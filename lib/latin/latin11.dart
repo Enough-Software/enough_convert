@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 11 / iso-8859-11 codec for easy encoding and decoding.
+class Latin11Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin11Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin11Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin11Decoder get decoder => allowInvalid
+      ? const Latin11Decoder(allowInvalid: true)
+      : const Latin11Decoder(allowInvalid: false);
+
+  @override
+  Latin11Encoder get encoder => allowInvalid
+      ? const Latin11Encoder(allowInvalid: true)
+      : const Latin11Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-11';
+}
+
+/// Encodes texts into latin 11 / iso-88511-11 data
+class Latin11Encoder extends LatinEncoder {
+  /// Creates a new [Latin11Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin11Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin11SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 11 /  iso-88511-11 data.
+class Latin11Decoder extends LatinDecoder {
+  /// Creates a new [Latin11Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin11Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin11Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin11Symbols =
+// ignore: lines_longer_than_80_chars
     'กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรฤลฦวศษสหฬอฮฯะัาำิีึืฺุู????฿เแโใไๅๆ็่้๊๋์ํ๎๏๐๑๒๓๔๕๖๗๘๙๚๛????';
 const Map<int, int> _latin11SymbolMap = {
   3585: 161,
@@ -93,46 +147,3 @@ const Map<int, int> _latin11SymbolMap = {
   3674: 250,
   3675: 251,
 };
-
-/// Provides a latin 11 / iso-8859-11 codec for easy encoding and decoding.
-class Latin11Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin11Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin11Decoder get decoder => allowInvalid
-      ? const Latin11Decoder(allowInvalid: true)
-      : const Latin11Decoder(allowInvalid: false);
-
-  @override
-  Latin11Encoder get encoder => allowInvalid
-      ? const Latin11Encoder(allowInvalid: true)
-      : const Latin11Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-11';
-}
-
-/// Encodes texts into latin 11 / iso-88511-11 data
-class Latin11Encoder extends LatinEncoder {
-  const Latin11Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin11SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 11 /  iso-88511-11 data.
-class Latin11Decoder extends LatinDecoder {
-  const Latin11Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin11Symbols, allowInvalid: allowInvalid);
-}

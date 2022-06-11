@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 4 / iso-8859-4 codec for easy encoding and decoding.
+class Latin4Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin4Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin4Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin4Decoder get decoder => allowInvalid
+      ? const Latin4Decoder(allowInvalid: true)
+      : const Latin4Decoder(allowInvalid: false);
+
+  @override
+  Latin4Encoder get encoder => allowInvalid
+      ? const Latin4Encoder(allowInvalid: true)
+      : const Latin4Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-4';
+}
+
+/// Encodes texts into latin 4 / iso-8859-4 data
+class Latin4Encoder extends LatinEncoder {
+  /// Creates a new [Latin4Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin4Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin4SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 4 /  iso-8859-4 data.
+class Latin4Decoder extends LatinDecoder {
+  /// Creates a new [Latin4Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin4Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin4Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin4Symbols =
+// ignore: lines_longer_than_80_chars
     'ĄĸŖ¤ĨĻ§¨ŠĒĢŦ\u{00AD}Ž¯°ą˛ŗ´ĩļˇ¸šēģŧŊžŋĀÁÂÃÄÅÆĮČÉĘËĖÍÎĪĐŅŌĶÔÕÖ×ØŲÚÛÜŨŪßāáâãäåæįčéęëėíîīđņōķôõö÷øųúûüũū˙';
 const Map<int, int> _latin4SymbolMap = {
   260: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin4SymbolMap = {
   363: 254,
   729: 255,
 };
-
-/// Provides a latin 4 / iso-8859-4 codec for easy encoding and decoding.
-class Latin4Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin4Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin4Decoder get decoder => allowInvalid
-      ? const Latin4Decoder(allowInvalid: true)
-      : const Latin4Decoder(allowInvalid: false);
-
-  @override
-  Latin4Encoder get encoder => allowInvalid
-      ? const Latin4Encoder(allowInvalid: true)
-      : const Latin4Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-4';
-}
-
-/// Encodes texts into latin 4 / iso-8859-4 data
-class Latin4Encoder extends LatinEncoder {
-  const Latin4Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin4SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 4 /  iso-8859-4 data.
-class Latin4Decoder extends LatinDecoder {
-  const Latin4Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin4Symbols, allowInvalid: allowInvalid);
-}

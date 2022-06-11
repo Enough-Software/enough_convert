@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 14 / iso-8859-14 codec for easy encoding and decoding.
+class Latin14Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin14Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin14Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin14Decoder get decoder => allowInvalid
+      ? const Latin14Decoder(allowInvalid: true)
+      : const Latin14Decoder(allowInvalid: false);
+
+  @override
+  Latin14Encoder get encoder => allowInvalid
+      ? const Latin14Encoder(allowInvalid: true)
+      : const Latin14Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-14';
+}
+
+/// Encodes texts into latin 14 / iso-88514-14 data
+class Latin14Encoder extends LatinEncoder {
+  /// Creates a new [Latin14Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin14Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin14SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 14 /  iso-88514-14 data.
+class Latin14Decoder extends LatinDecoder {
+  /// Creates a new [Latin14Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin14Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin14Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin14Symbols =
+// ignore: lines_longer_than_80_chars
     'Ḃḃ£ĊċḊ§Ẁ©ẂḋỲ\u{00AD}®ŸḞḟĠġṀṁ¶ṖẁṗẃṠỳẄẅṡÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏŴÑÒÓÔÕÖṪØÙÚÛÜÝŶßàáâãäåæçèéêëìíîïŵñòóôõöṫøùúûüýŷÿ';
 const Map<int, int> _latin14SymbolMap = {
   7682: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin14SymbolMap = {
   375: 254,
   255: 255,
 };
-
-/// Provides a latin 14 / iso-8859-14 codec for easy encoding and decoding.
-class Latin14Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin14Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin14Decoder get decoder => allowInvalid
-      ? const Latin14Decoder(allowInvalid: true)
-      : const Latin14Decoder(allowInvalid: false);
-
-  @override
-  Latin14Encoder get encoder => allowInvalid
-      ? const Latin14Encoder(allowInvalid: true)
-      : const Latin14Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-14';
-}
-
-/// Encodes texts into latin 14 / iso-88514-14 data
-class Latin14Encoder extends LatinEncoder {
-  const Latin14Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin14SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 14 /  iso-88514-14 data.
-class Latin14Decoder extends LatinDecoder {
-  const Latin14Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin14Symbols, allowInvalid: allowInvalid);
-}

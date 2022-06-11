@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 16 / iso-8859-16 codec for easy encoding and decoding.
+class Latin16Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin16Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin16Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin16Decoder get decoder => allowInvalid
+      ? const Latin16Decoder(allowInvalid: true)
+      : const Latin16Decoder(allowInvalid: false);
+
+  @override
+  Latin16Encoder get encoder => allowInvalid
+      ? const Latin16Encoder(allowInvalid: true)
+      : const Latin16Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-16';
+}
+
+/// Encodes texts into latin 16 / iso-88516-16 data
+class Latin16Encoder extends LatinEncoder {
+  /// Creates a new [Latin16Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin16Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin16SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 16 /  iso-88516-16 data.
+class Latin16Decoder extends LatinDecoder {
+  /// Creates a new [Latin16Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin16Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin16Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin16Symbols =
+// ignore: lines_longer_than_80_chars
     'ĄąŁ€„Š§š©Ș«Ź\u{00AD}źŻ°±ČłŽ”¶·žčș»ŒœŸżÀÁÂĂÄĆÆÇÈÉÊËÌÍÎÏĐŃÒÓÔŐÖŚŰÙÚÛÜĘȚßàáâăäćæçèéêëìíîïđńòóôőöśűùúûüęțÿ';
 const Map<int, int> _latin16SymbolMap = {
   260: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin16SymbolMap = {
   539: 254,
   255: 255,
 };
-
-/// Provides a latin 16 / iso-8859-16 codec for easy encoding and decoding.
-class Latin16Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin16Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin16Decoder get decoder => allowInvalid
-      ? const Latin16Decoder(allowInvalid: true)
-      : const Latin16Decoder(allowInvalid: false);
-
-  @override
-  Latin16Encoder get encoder => allowInvalid
-      ? const Latin16Encoder(allowInvalid: true)
-      : const Latin16Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-16';
-}
-
-/// Encodes texts into latin 16 / iso-88516-16 data
-class Latin16Encoder extends LatinEncoder {
-  const Latin16Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin16SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 16 /  iso-88516-16 data.
-class Latin16Decoder extends LatinDecoder {
-  const Latin16Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin16Symbols, allowInvalid: allowInvalid);
-}

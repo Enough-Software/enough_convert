@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
 import 'latin.dart';
 
+/// Provides a latin 10 / iso-8859-10 codec for easy encoding and decoding.
+class Latin10Codec extends dart_convert.Encoding {
+  /// Creates a new [Latin10Codec]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Latin10Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Latin10Decoder get decoder => allowInvalid
+      ? const Latin10Decoder(allowInvalid: true)
+      : const Latin10Decoder(allowInvalid: false);
+
+  @override
+  Latin10Encoder get encoder => allowInvalid
+      ? const Latin10Encoder(allowInvalid: true)
+      : const Latin10Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'iso-8859-10';
+}
+
+/// Encodes texts into latin 10 / iso-88510-10 data
+class Latin10Encoder extends LatinEncoder {
+  /// Creates a new [Latin10Encoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Latin10Encoder({
+    bool allowInvalid = false,
+  }) : super(_latin10SymbolMap, allowInvalid: allowInvalid);
+}
+
+/// Decodes latin 10 /  iso-88510-10 data.
+class Latin10Decoder extends LatinDecoder {
+  /// Creates a new [Latin10Decoder]
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Latin10Decoder({
+    bool allowInvalid = false,
+  }) : super(_latin10Symbols, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _latin10Symbols =
+// ignore: lines_longer_than_80_chars
     'ĄĒĢĪĨĶ§ĻĐŠŦŽ\u{00AD}ŪŊ°ąēģīĩķ·ļđšŧž―ūŋĀÁÂÃÄÅÆĮČÉĘËĖÍÎÏÐŅŌÓÔÕÖŨØŲÚÛÜÝÞßāáâãäåæįčéęëėíîïðņōóôõöũøųúûüýþĸ';
 const Map<int, int> _latin10SymbolMap = {
   260: 161,
@@ -101,46 +155,3 @@ const Map<int, int> _latin10SymbolMap = {
   254: 254,
   312: 255,
 };
-
-/// Provides a latin 10 / iso-8859-10 codec for easy encoding and decoding.
-class Latin10Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Latin10Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Latin10Decoder get decoder => allowInvalid
-      ? const Latin10Decoder(allowInvalid: true)
-      : const Latin10Decoder(allowInvalid: false);
-
-  @override
-  Latin10Encoder get encoder => allowInvalid
-      ? const Latin10Encoder(allowInvalid: true)
-      : const Latin10Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'iso-8859-10';
-}
-
-/// Encodes texts into latin 10 / iso-88510-10 data
-class Latin10Encoder extends LatinEncoder {
-  const Latin10Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_latin10SymbolMap, allowInvalid: allowInvalid);
-}
-
-/// Decodes latin 10 /  iso-88510-10 data.
-class Latin10Decoder extends LatinDecoder {
-  const Latin10Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_latin10Symbols, allowInvalid: allowInvalid);
-}

@@ -1,8 +1,62 @@
-import 'dart:convert' as cnvrt;
+import 'dart:convert' as dart_convert;
 
-import 'package:enough_convert/windows/windows.dart';
+import 'windows.dart';
 
+/// Provides a windows 1251 / cp1251 codec for easy encoding and decoding.
+class Windows1251Codec extends dart_convert.Encoding {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ? and decoded to �
+  const Windows1251Codec({
+    this.allowInvalid = false,
+  });
+
+  /// Should invalid character codes be ignored?
+  ///
+  /// When `false`, an invalid character code
+  /// will throw [FormatException].
+  final bool allowInvalid;
+
+  @override
+  Windows1251Decoder get decoder => allowInvalid
+      ? const Windows1251Decoder(allowInvalid: true)
+      : const Windows1251Decoder(allowInvalid: false);
+
+  @override
+  Windows1251Encoder get encoder => allowInvalid
+      ? const Windows1251Encoder(allowInvalid: true)
+      : const Windows1251Encoder(allowInvalid: false);
+
+  @override
+  String get name => 'windows-1251';
+}
+
+/// Decodes windows 1251 / cp1251 data.
+class Windows1251Decoder extends WindowsDecoder {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be decoded to �
+  const Windows1251Decoder({
+    bool allowInvalid = false,
+  }) : super(_cp1251Symbols, allowInvalid: allowInvalid);
+}
+
+/// Encodes texts into windows 1251 data
+class Windows1251Encoder extends WindowsEncoder {
+  /// Creates a new []
+  ///
+  /// Set [allowInvalid] to `true` for ignoring invalid data.
+  /// When invalid data is allowed it  will be encoded to ?
+  const Windows1251Encoder({
+    bool allowInvalid = false,
+  }) : super(_cp1251Map, allowInvalid: allowInvalid);
+}
+
+// cSpell:disable
 const String _cp1251Symbols =
+// ignore: lines_longer_than_80_chars
     'ЂЃ‚ѓ„…†‡€‰Љ‹ЊЌЋЏђ‘’“”•–—?™љ›њќћџ\u{00A0}ЎўЈ¤Ґ¦§Ё©Є«¬\u{00AD}®Ї°±Ііґµ¶·ё№є»јЅѕїАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя';
 const Map<int, int> _cp1251Map = {
   1026: 128,
@@ -133,46 +187,3 @@ const Map<int, int> _cp1251Map = {
   1102: 254,
   1103: 255,
 };
-
-/// Provides a windows 1251 / cp1251 codec for easy encoding and decoding.
-class Windows1251Codec extends cnvrt.Encoding {
-  final bool allowInvalid;
-
-  /// Creates a new codec
-  const Windows1251Codec({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ? and decoded to �
-    this.allowInvalid = false,
-  });
-
-  @override
-  Windows1251Decoder get decoder => allowInvalid
-      ? const Windows1251Decoder(allowInvalid: true)
-      : const Windows1251Decoder(allowInvalid: false);
-
-  @override
-  Windows1251Encoder get encoder => allowInvalid
-      ? const Windows1251Encoder(allowInvalid: true)
-      : const Windows1251Encoder(allowInvalid: false);
-
-  @override
-  String get name => 'windows-1251';
-}
-
-/// Decodes windows 1251 / cp1251 data.
-class Windows1251Decoder extends WindowsDecoder {
-  const Windows1251Decoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be decoded to �
-    bool allowInvalid = false,
-  }) : super(_cp1251Symbols, allowInvalid: allowInvalid);
-}
-
-/// Encodes texts into windows 1251 data
-class Windows1251Encoder extends WindowsEncoder {
-  const Windows1251Encoder({
-    /// set [allowInvalid] to `true` for ignoring invalid data.
-    /// When invalid data is allowed it  will be encoded to ?
-    bool allowInvalid = false,
-  }) : super(_cp1251Map, allowInvalid: allowInvalid);
-}
