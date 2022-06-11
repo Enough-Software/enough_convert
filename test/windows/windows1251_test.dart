@@ -3,7 +3,7 @@
 
 import 'dart:convert' as dart_convert;
 
-import 'package:enough_convert/windows/windows1251.dart';
+import 'package:enough_convert/enough_convert.dart';
 import 'package:test/test.dart';
 
 void main() {

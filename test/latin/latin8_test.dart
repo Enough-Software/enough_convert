@@ -2,7 +2,7 @@
 // cSpell:disable
 
 import 'dart:convert' as dart_convert;
-import 'package:enough_convert/latin/latin8.dart';
+import 'package:enough_convert/enough_convert.dart';
 import 'package:test/test.dart';
 
 //import 'package:characters/characters.dart';

@@ -3,7 +3,7 @@
 
 import 'dart:convert' as convert;
 
-import 'package:enough_convert/koi8/koi8_u.dart';
+import 'package:enough_convert/enough_convert.dart';
 import 'package:test/test.dart';
 
 void main() {
