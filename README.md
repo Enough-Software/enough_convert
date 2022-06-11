@@ -1,4 +1,4 @@
-Support for character encodings, charsets and codecs missing from `dart:convert`.
+Support for character encodings / charsets / codecs missing from `dart:convert`.
 
 Supports the following encodings:
 * Latin / ISO 8859 encodings:
@@ -28,7 +28,7 @@ Supports the following encodings:
 * KOI8
   * KOI8-R
   * KOI8-U
-
+* Big5
 
 ## Usage
 

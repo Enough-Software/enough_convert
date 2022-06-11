@@ -134,6 +134,10 @@ void koi8u() {
       const Koi8uCodec(allowInvalid: false), 'Радий познайомитися з Вами!');
 }
 
+void big5() {
+  roundtrip(const Big5Codec(allowInvalid: false), '傳統');
+}
+
 void roundtrip(dart_convert.Encoding codec, String input) {
   final encoded = codec.encode(input);
   final decoded = codec.decode([...encoded]);
