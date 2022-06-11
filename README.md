@@ -53,7 +53,7 @@ Add this dependency your pubspec.yaml file:
 
 ```
 dependencies:
-  enough_convert: ^1.3.0
+  enough_convert: ^1.5.0
 ```
 The latest version or `enough_convert` is [![enough_convert version](https://img.shields.io/pub/v/enough_convert.svg)](https://pub.dartlang.org/packages/enough_convert).
 

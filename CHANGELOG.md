@@ -1,3 +1,9 @@
+## 1.5.0
+- Thanks to [bobaxix](https://github.com/bobaxix) both KOI8-R as well as KOI8-U codecs are now supported.
+- Add support for [big5](https://en.wikipedia.org/wiki/Big5) encoding by forking https://github.com/douasin/big5-dart.
+- Restructure the package to hide implementation details - in doubt `import 'package:enough_convert/enough_convert.dart';`.
+- Improve documentation and code style
+
 ## 1.4.0
 - Thanks to [moheb2000](https://github.com/moheb2000) now the Windows-1256 codec (Persian) works as expected.
 
