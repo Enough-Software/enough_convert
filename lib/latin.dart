@@ -1,6 +1,11 @@
-/// Provides missing common character encoders / decoders / codecs /
+/// Provides missing common ISO-8859 character encoders / decoders / codecs /
 /// encodings / charset converters for Dart.
-library enough_convert;
+///
+/// Use the following statement to access all ISO-8859 latin codecs:
+/// ```dart
+/// import 'package:enough_convert/latin.dart';
+/// ```
+library enough_convert_latin;
 
 export 'src/latin/latin10.dart';
 export 'src/latin/latin11.dart';

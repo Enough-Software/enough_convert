@@ -1,6 +1,11 @@
-/// Provides missing common character encoders / decoders / codecs /
+/// Provides missing common windows character encoders / decoders / codecs /
 /// encodings / charset converters for Dart.
-library enough_convert;
+///
+/// Use the following statement to access all Windows codecs:
+/// ```dart
+/// import 'package:enough_convert/windows.dart';
+/// ```
+library enough_convert_windows;
 
 export 'src/windows/windows1250.dart';
 export 'src/windows/windows1251.dart';

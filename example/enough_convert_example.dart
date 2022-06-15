@@ -27,6 +27,8 @@ void main() {
   gbk();
   koi8r();
   koi8u();
+  big5();
+  cp850();
 }
 
 // cSpell:disable
@@ -136,6 +138,10 @@ void koi8u() {
 
 void big5() {
   roundtrip(const Big5Codec(allowInvalid: false), '傳統');
+}
+
+void cp850() {
+  roundtrip(const CodePage850Codec(allowInvalid: false), '♥HELLÖ DOS WØRLD♥');
 }
 
 void roundtrip(dart_convert.Encoding codec, String input) {

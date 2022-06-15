@@ -1,6 +1,5 @@
 part of 'gbk.dart';
 
-
 /// The GPK decoder map
 ///
 /// Forked from https://github.com/lixiangthinker/fast_gbk

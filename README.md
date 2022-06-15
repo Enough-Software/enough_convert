@@ -24,6 +24,8 @@ Supports the following encodings:
   * Windows-1253 / cp-1253
   * Windows-1254 / cp-1254
   * Windows-1256 / cp-1256
+* DOS Codepage Encodings:
+  * cp-850
 * GBK (compatible with GB-2312)
 * KOI8
   * KOI8-R
@@ -53,10 +55,21 @@ Add this dependency your pubspec.yaml file:
 
 ```
 dependencies:
-  enough_convert: ^1.5.0
+  enough_convert: ^1.6.0
 ```
 The latest version or `enough_convert` is [![enough_convert version](https://img.shields.io/pub/v/enough_convert.svg)](https://pub.dartlang.org/packages/enough_convert).
 
+
+## Wait, what is this about?
+
+Dylan (not associated with this project in any way) explains the world of text encoding quite well:
+https://www.youtube.com/watch?v=_mZBa3sqTrI
+
+## It's 2022, do we still need this?
+
+Short answer: yes.
+
+Long answer: yes, there are still many web pages, emails and other content out there that is encoded in various text encodings.
 
 ## Features and bugs
 

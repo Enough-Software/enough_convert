@@ -1,3 +1,7 @@
+## 1.6.0
+- Add cp-850 / DOS-Latin-1 encoding support.
+- Improve documentation.
+
 ## 1.5.0
 - Thanks to [bobaxix](https://github.com/bobaxix) both KOI8-R as well as KOI8-U codecs are now supported.
 - Add support for [big5](https://en.wikipedia.org/wiki/Big5) encoding by forking https://github.com/douasin/big5-dart.
