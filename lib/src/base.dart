@@ -17,7 +17,20 @@ class BaseDecoder extends dart_convert.Converter<List<int>, String> {
   /// Set [allowInvalid] to true in case invalid characters sequences
   /// should be at least readable.
   const BaseDecoder(this.symbols, this.startIndex, {this.allowInvalid = false})
-      : assert(symbols.length == 255 - startIndex, 'invalid length of symbols');
+      : startBlock = null,
+        assert(symbols.length == 255 - startIndex, 'invalid length of symbols');
+
+  /// Creates a a base decoder with a non-ascii start block
+  const BaseDecoder.withNonAsciiStartBlock(
+      String startBlock, this.symbols, this.startIndex,
+      {this.allowInvalid = false})
+      // ignore: prefer_initializing_formals, unnecessary_this
+      : this.startBlock = startBlock,
+        assert(symbols.length == 255 - startIndex, 'invalid length of symbols');
+
+  /// The start pattern for partially non-Ascii compliant character sets
+  /// like DOS-Latin-1 / cp-850.
+  final String? startBlock;
 
   /// The used symbols
   final String symbols;
@@ -34,12 +47,16 @@ class BaseDecoder extends dart_convert.Converter<List<int>, String> {
   @override
   String convert(List<int> input, [int start = 0, int? end]) {
     final usedEnd = RangeError.checkValidRange(start, end, input.length);
+    final startBlock = this.startBlock;
+    final startBlockLength = startBlock?.length ?? 0;
     List<int>? modified;
     for (var i = start; i < usedEnd; i++) {
       final byte = input[i];
       if ((byte & ~0xFF) != 0) {
         if (!allowInvalid) {
-          throw FormatException('Invalid value in input: $byte at position $i');
+          throw FormatException('Invalid value in input: $byte '
+              'at position $i '
+              'in "${String.fromCharCodes(input, start, usedEnd)}"');
         } else {
           modified ??= List.from(input);
           modified[i] = 0xFFFD; // unicode �
@@ -48,6 +65,9 @@ class BaseDecoder extends dart_convert.Converter<List<int>, String> {
         final index = byte - (startIndex + 1);
         modified ??= List.from(input);
         modified[i] = symbols.codeUnitAt(index);
+      } else if (byte <= startBlockLength) {
+        modified ??= List.from(input);
+        modified[i] = startBlock!.codeUnitAt(byte - 1);
       }
     }
     return String.fromCharCodes(modified ?? input, start, end);
@@ -71,8 +91,12 @@ class BaseEncoder extends dart_convert.Converter<String, List<int>> {
   ///
   /// Set [allowInvalid] to true in case invalid characters should be
   /// translated to question marks.
-  const BaseEncoder(this.encodingMap, this.startIndex,
-      {this.allowInvalid = false});
+  const BaseEncoder(
+    this.encodingMap,
+    this.startIndex, {
+    this.allowInvalid = false,
+    this.lowerEndIndex = -1,
+  });
 
   /// Should invalid character codes be ignored?
   ///
@@ -85,6 +109,11 @@ class BaseEncoder extends dart_convert.Converter<String, List<int>> {
 
   /// The index of the first non-ASCII character
   final int startIndex;
+
+  /// End index of the lower block.
+  ///
+  /// Usually there is no lower block and this is `-1`.
+  final int lowerEndIndex;
 
   /// Static helper function to generate a conversion map from a symbols string.
   static Map<int, int> createEncodingMap(String symbols, int startIndex) {
@@ -105,7 +134,7 @@ class BaseEncoder extends dart_convert.Converter<String, List<int>> {
           final firstIndex = symbols.indexOf(symbol);
           final lastIndex = symbols.lastIndexOf(symbol);
           throw FormatException(
-              'Duplicate value $value for isoSymbols "$symbol" at index $index '
+              'Duplicate value $value for symbols "$symbol" at index $index '
               '- in symbols to found at $firstIndex and $lastIndex');
         }
         if (value <= startIndex) {
@@ -130,13 +159,13 @@ class BaseEncoder extends dart_convert.Converter<String, List<int>> {
     }
     for (var i = 0; i < runesList.length; i++) {
       final rune = runesList[i];
-      if (rune > startIndex) {
+      if (rune > startIndex || (rune <= lowerEndIndex && rune > 0)) {
         final value = encodingMap[rune];
         if (value == null) {
           if (!allowInvalid) {
             throw FormatException(
                 'Invalid value in input: "${String.fromCharCode(rune)}" '
-                '/ ($rune) at index $i');
+                '/ ($rune) at index $i of "$input"');
           } else {
             runesList[i] = 0x3F; // ?
           }
