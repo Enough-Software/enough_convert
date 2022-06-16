@@ -63,7 +63,8 @@ The latest version or `enough_convert` is [![enough_convert version](https://img
 ## Wait, what is this about?
 
 Dylan (not associated with this project in any way) explains the world of text encoding quite well:
-https://www.youtube.com/watch?v=_mZBa3sqTrI
+[![Plain text? Really?](https://img.youtube.com/vi/_mZBa3sqTrI/0.jpg)](https://www.youtube.com/watch?v=_mZBa3sqTrI)
+
 
 ## It's 2022, do we still need this?
 
