@@ -26,6 +26,7 @@ Supports the following encodings:
   * Windows-1256 / cp-1256
 * DOS Codepage Encodings:
   * cp-850
+  * cp-858
 * GBK (compatible with GB-2312)
 * KOI8
   * KOI8-R
