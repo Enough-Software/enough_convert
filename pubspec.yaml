@@ -1,6 +1,6 @@
 name: enough_convert
 description: Support for character encodings / charsets / codecs missing from `dart:convert` - ISO 8859 / Latin, Windows, DOS, GBK, Big5, and KOI8 R/U.
-version: 1.6.0
+version: 1.6.0+cp858
 homepage: https://github.com/Enough-Software/enough_convert
 
 environment:
