@@ -1,4 +1,4 @@
-## 1.7.0
+## 1.7.1
 - Add cp-858,windows-1225 encoding support.
 - Expose base encoders and decoders.
 - Update dependencies.
