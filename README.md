@@ -51,6 +51,25 @@ main() {
 }
 ```
 
+If codec you require is not implemented, you can try implementing it youtself by extending one of base Decoder/Encoder sets.
+
+Example `Windows 1257` codec:
+```dart
+import 'package:enough_convert/windows_base.dart';
+
+class Windows1257Codec extends Encoding {
+...
+}
+
+class Windows1257Decoder extends WindowsDecoder {
+...
+}
+
+class Windows1257Encoder extends WindowsEncoder {
+...
+}
+```
+
 ## Installation
 Add this dependency your pubspec.yaml file:
 

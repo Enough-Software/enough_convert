@@ -4,7 +4,14 @@ import 'dart:convert' as dart_convert;
 
 import 'package:enough_convert/enough_convert.dart';
 
+import 'windows1257.dart';
+
 void main() {
+  builtInCodecs();
+  customCodecs();
+}
+
+void builtInCodecs() {
   latin2();
   latin3();
   latin4();
@@ -29,6 +36,10 @@ void main() {
   koi8u();
   big5();
   cp850();
+}
+
+void customCodecs() {
+  customWindows1257();
 }
 
 // cSpell:disable
@@ -142,6 +153,10 @@ void big5() {
 
 void cp850() {
   roundtrip(const CodePage850Codec(allowInvalid: false), '♥HELLÖ DOS WØRLD♥');
+}
+
+void customWindows1257() {
+  roundtrip(const Windows1257Codec(allowInvalid: false), 'Prieks iepazīties!');
 }
 
 void roundtrip(dart_convert.Encoding codec, String input) {
