@@ -1,3 +1,9 @@
+## 1.7.0
+- Add cp-858,windows-1225 encoding support.
+- Expose base encoders and decoders.
+- Update dependencies.
+- Thanks to all [maurovanetti](https://github.com/maurovanetti) and [Jar0T](https://github.com/Jar0T)!
+
 ## 1.6.0
 - Add cp-850 / DOS-Latin-1 encoding support.
 - Improve documentation.
